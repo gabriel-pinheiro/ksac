@@ -59,8 +59,11 @@ export class StackSpot {
         );
     }
 
+    /**
+     * Authenticates the client if not already authenticated. Returns an error if authentication fails.
+     */
     @Synchronize()
-    private async assertAuthenticated(): Promise<void> {
+    async assertAuthenticated(): Promise<void> {
         if (this.token && Date.now() < this.expiresAt) {
             return;
         }
