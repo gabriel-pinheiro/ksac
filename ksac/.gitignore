@@ -1,0 +1,11 @@
+/node_modules
+/dist
+
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
