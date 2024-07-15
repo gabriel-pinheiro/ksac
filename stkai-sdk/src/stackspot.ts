@@ -1,3 +1,4 @@
+import { Synchronize } from "@mocko/sync";
 import { KnowledgeSourceType, StackSpotAPI, StackSpotOptions } from "./stackspot-api";
 
 const AUTHENTICATION_JITTER = 3000;
@@ -58,6 +59,7 @@ export class StackSpot {
         );
     }
 
+    @Synchronize()
     private async assertAuthenticated(): Promise<void> {
         if (this.token && Date.now() < this.expiresAt) {
             return;
