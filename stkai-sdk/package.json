@@ -1,0 +1,22 @@
+{
+  "name": "stkai-sdk",
+  "version": "1.0.0",
+  "description": "SDK for integration with StackSpot AI",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabriel-pinheiro/ksac.git"
+  },
+  "keywords": [
+    "StackSpot"
+  ],
+  "author": "Gabriel Pinheiro <gabrielctpinheiro@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/gabriel-pinheiro/ksac/issues"
+  },
+  "homepage": "https://github.com/gabriel-pinheiro/ksac#readme"
+}
