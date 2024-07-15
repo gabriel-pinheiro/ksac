@@ -2,11 +2,24 @@ import { KnowledgeSourceType, StackSpotAPI, StackSpotOptions } from "./stackspot
 
 const AUTHENTICATION_JITTER = 3000;
 
+/**
+ * A client for the StackSpot API that handles authentication and implements multi-request actions.
+ */
 export class StackSpot {
     private readonly api = new StackSpotAPI(this.options);
     private token = '';
     private expiresAt = 0;
 
+    /**
+     * Creates an instance of StackSpot.
+     *
+     * @param realm - The realm for authentication.
+     * @param clientId - The client ID for authentication.
+     * @param clientKey - The client secret key for authentication.
+     * @param options - Configuration options for the StackSpot client.
+     * @param options.apiUrl - The base URL for the StackSpot API, defaults to 'https://genai-code-buddy-api.stackspot.com'.
+     * @param options.idmUrl - The base URL for the StackSpot Identity Manager, defaults to 'https://idm.stackspot.com'.
+     */
     constructor(
         private readonly realm: string,
         private readonly clientId: string,
@@ -14,6 +27,15 @@ export class StackSpot {
         private readonly options: StackSpotOptions = {},
     ) { }
 
+    /**
+     * Creates a new knowledge source and shares it with the account.
+     *
+     * @param slug - The slug for the knowledge source.
+     * @param name - The name of the knowledge source.
+     * @param type - The type of the knowledge source, either 'SNIPPET', 'API', or 'CUSTOM'.
+     * @param description - The description of the knowledge source.
+     * @returns A promise that resolves when the knowledge source is created and shared.
+     */
     async createAccountKnowledgeSource(
         slug: string,
         name: string,

@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import type { Axios, AxiosInstance, AxiosResponse } from 'axios';
+import type { AxiosInstance, AxiosResponse } from 'axios';
 
 export type StackSpotOptions = {
     apiUrl?: string;
@@ -19,10 +19,19 @@ export type AuthenticateResponse = {
     session_state: string;
 };
 
+/**
+ * A raw connector for the StackSpot API, use `StackSpot` for a more user-friendly interface.
+ */
 export class StackSpotAPI {
     private readonly api: AxiosInstance;
     private readonly idm: AxiosInstance;
 
+    /**
+     * Creates an instance of StackSpotAPI.
+     * @param options - Configuration options for the API.
+     * @param options.apiUrl - The base URL for the StackSpot API, defaults to 'https://genai-code-buddy-api.stackspot.com'.
+     * @param options.idmUrl - The base URL for the StackSpot Identity Manager, defaults to 'https://idm.stackspot.com'.
+     */
     constructor(options: StackSpotOptions = {}) {
         const {
             apiUrl = 'https://genai-code-buddy-api.stackspot.com',
@@ -44,6 +53,13 @@ export class StackSpotAPI {
         });
     }
 
+    /**
+     * Authenticates the client with the given credentials.
+     * @param realm - The realm for authentication.
+     * @param clientId - The client ID.
+     * @param clientKey - The client secret key.
+     * @returns A promise that resolves to the authentication response, get the token with `.data.access_token`.
+     */
     async authenticate(
         realm: string,
         clientId: string,
@@ -56,6 +72,17 @@ export class StackSpotAPI {
         });
     }
 
+    /**
+     * Creates a new knowledge source.
+     * @param jwt - The JWT for authorization, obtained from `StackSpotAPI#authenticate`.
+     * @param slug - The slug identifier for the knowledge source.
+     * @param name - The name of the knowledge source.
+     * @param description - The description of the knowledge source.
+     * @param type - The type of the knowledge source, either 'SNIPPET', 'API', or 'CUSTOM'.
+     * @param isDefault - Whether the knowledge source is used by default or must be added manually.
+     * @param visibilityLevel - The visibility level of the knowledge source, either 'personal' or 'account'.
+     * @returns A promise that resolves when the knowledge source is created.
+     */
     async createKnowledgeSource(
         jwt: string,
         slug: string,
@@ -79,6 +106,12 @@ export class StackSpotAPI {
         });
     }
 
+    /**
+     * Shares an existing knowledge source.
+     * @param jwt - The JSON Web Token for authorization.
+     * @param slug - The slug identifier for the knowledge source.
+     * @returns A promise that resolves when the knowledge source is shared.
+     */
     async shareKnowledgeSource(
         jwt: string,
         slug: string
