@@ -122,4 +122,31 @@ export class StackSpotAPI {
             },
         });
     }
+
+    /**
+     * Creates a new snippet in a knowledge source.
+     *
+     * @param jwt - The JWT for authorization, obtained from `StackSpotAPI#authenticate`.
+     * @param slug - The slug identifier for the knowledge source.
+     * @param code - The code content of the snippet.
+     * @param language - The language of the code snippet.
+     * @param useCase - The use case of the code snippet.
+     */
+    async createSnippet(
+        jwt: string,
+        slug: string,
+        code: string,
+        language: string,
+        useCase: string,
+    ): Promise<AxiosResponse> {
+        return await this.api.post(`/v1/knowledge-sources/${slug}/snippets`, {
+            code,
+            language,
+            use_case: useCase,
+        }, {
+            headers: {
+                Authorization: `Bearer ${jwt}`,
+            },
+        });
+    }
 }

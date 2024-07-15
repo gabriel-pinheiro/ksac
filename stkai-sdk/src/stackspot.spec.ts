@@ -54,6 +54,34 @@ describe('StackSpot', () => {
         });
     });
 
+    describe('createSnippet', () => {
+        it('should create a snippet', async () => {
+            const slug = 'test-slug';
+            const code = 'console.log("Hello, World!");';
+            const language = 'javascript';
+            const useCase = 'Test use case';
+
+            mockApi.createSnippet.mockResolvedValue({} as any);
+            mockApi.authenticate.mockResolvedValue({
+                data: {
+                    access_token: 'test-token',
+                    expires_in: 3600,
+                },
+            } as any);
+
+            await stackSpot.createSnippet(slug, code, language, useCase);
+
+            expect(mockApi.authenticate).toHaveBeenCalledWith(realm, clientId, clientKey);
+            expect(mockApi.createSnippet).toHaveBeenCalledWith(
+                'test-token',
+                slug,
+                code,
+                language,
+                useCase,
+            );
+        });
+    });
+
     describe('assertAuthenticated', () => {
         it('should authenticate if not already authenticated', async () => {
             mockApi.authenticate.mockResolvedValue({

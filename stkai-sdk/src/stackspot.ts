@@ -59,6 +59,22 @@ export class StackSpot {
         );
     }
 
+    async createSnippet(
+        slug: string,
+        code: string,
+        language: string,
+        useCase: string,
+    ): Promise<void> {
+        await this.assertAuthenticated();
+        await this.api.createSnippet(
+            this.token,
+            slug,
+            code,
+            language,
+            useCase,
+        );
+    }
+
     /**
      * Authenticates the client if not already authenticated. Returns an error if authentication fails.
      */
