@@ -1,5 +1,5 @@
 import { Synchronize } from "@mocko/sync";
-import { KnowledgeSourceType, StackSpotAPI, StackSpotOptions } from "./stackspot-api";
+import { KnowledgeSource, KnowledgeSourceType, StackSpotAPI, StackSpotOptions } from "./stackspot-api";
 
 const AUTHENTICATION_JITTER = 3000;
 
@@ -57,6 +57,12 @@ export class StackSpot {
             this.token,
             slug
         );
+    }
+
+    async getKnowledgeSource(slug: string): Promise<KnowledgeSource> {
+        await this.assertAuthenticated();
+        const { data } = await this.api.getKnowledgeSource(this.token, slug);
+        return data;
     }
 
     async createSnippet(

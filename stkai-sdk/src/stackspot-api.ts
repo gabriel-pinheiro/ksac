@@ -19,6 +19,16 @@ export type AuthenticateResponse = {
     session_state: string;
 };
 
+export type KnowledgeSource = {
+    slug: string;
+    name: string;
+    description: string;
+    type: KnowledgeSourceType;
+    creator: string;
+    default: boolean;
+    visibility_level: KnowledgeSourceVisibilityLevel;
+};
+
 /**
  * A raw connector for the StackSpot API, use `StackSpot` for a more user-friendly interface.
  */
@@ -100,6 +110,17 @@ export class StackSpotAPI {
             'default': isDefault,
             visibility_level: visibilityLevel,
         }, {
+            headers: {
+                Authorization: `Bearer ${jwt}`,
+            },
+        });
+    }
+
+    async getKnowledgeSource(
+        jwt: string,
+        slug: string,
+    ): Promise<AxiosResponse<KnowledgeSource>> {
+        return await this.api.get(`/v1/knowledge-sources/${slug}`, {
             headers: {
                 Authorization: `Bearer ${jwt}`,
             },
