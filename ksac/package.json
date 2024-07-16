@@ -1,10 +1,10 @@
 {
   "name": "ksac",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "Knowledge Source as Code for StackSpot AI",
   "main": "dist/index.js",
   "bin": {
-    "mpf": "bin/ksac.js"
+    "ksac": "bin/ksac.js"
   },
   "scripts": {
     "prebuild": "rimraf dist",
