@@ -3,6 +3,7 @@ import { promises } from "fs";
 import { join } from "path";
 import { parse } from 'hcl-parser';
 import * as Hoek from '@hapi/hoek';
+import { CommandError } from "../command/command.error";
 
 const debug = require('debug')('ksac:definition-file:service');
 const { readdir, lstat, readFile } = promises;
@@ -30,14 +31,12 @@ export class DefinitionFileService {
             const content = await readFile(name)
                 .catch(Hoek.ignore);
             if (!content) {
-                console.error(`Failed to read file '${name}'`);
-                process.exit(1);
+                throw new CommandError(`Failed to read file '${name}'`);
             }
 
             const [data, error] = parse(content.toString());
             if(error) {
-                console.error(`Failed to parse file '${name}:${error.Pos.Line}:${error.Pos.Column}'`);
-                process.exit(1);
+                throw new CommandError(`Failed to parse file '${name}:${error.Pos.Line}:${error.Pos.Column}'`);
             }
 
             files.push({ name, content: data });
@@ -52,8 +51,7 @@ export class DefinitionFileService {
             .catch(Hoek.ignore);
 
         if(!fileNames) {
-            console.error(`Failed to load definitions from '${path}/', make sure it's a directory and your user has read permission on its files`);
-            process.exit(1);
+            throw new CommandError(`Failed to load definitions from '${path}/', make sure it's a directory and your user has read permission on its files`);
         }
 
         const files = await this.getFilesWithStats(path, fileNames);

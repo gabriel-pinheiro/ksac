@@ -1,6 +1,7 @@
 import { injectable } from "inversify";
 import * as Joi from 'joi';
 import { DefinitionFile } from "./definition-file.service";
+import { CommandError } from "../command/command.error";
 
 const debug = require('debug')('ksac:definition-validator:service');
 
@@ -53,9 +54,7 @@ export class DefinitionValidationService {
             return;
         }
 
-        console.error(`Invalid definition format in file '${definitions.fileName}'`);
-        console.error(error.message);
-        process.exit(1);
+        throw new CommandError(`Invalid definition format in file '${definitions.fileName}'\n${error.message}`);
     }
 
     mapFileToDefinition(file: DefinitionFile): Definition {
@@ -74,24 +73,20 @@ export class DefinitionValidationService {
             return;
         }
 
-        console.error(`File '${file.name}' is not a valid object`);
-        process.exit(1);
+        throw new CommandError(`File '${file.name}' is not a valid object`);
     }
 
     private validateDefinitionFormat(file: DefinitionFile) {
         if (!file.content.hasOwnProperty('knowledge_source')) {
-            console.error(`File '${file.name}' does not contain 'knowledge_source's`);
-            process.exit(1);
+            throw new CommandError(`File '${file.name}' does not contain 'knowledge_source's`);
         }
 
         if (!Array.isArray(file.content.knowledge_source)) {
-            console.error(`'knowledge_source' in file '${file.name}' is not a named object, invalid format`);
-            process.exit(1);
+            throw new CommandError(`'knowledge_source' in file '${file.name}' is not a named object, invalid format`);
         }
 
         if (Object.keys(file.content).length !== 1) {
-            console.error(`File '${file.name}' contains other properties than 'knowledge_source'`);
-            process.exit(1);
+            throw new CommandError(`File '${file.name}' contains other properties than 'knowledge_source'`);
         }
     }
 
@@ -117,18 +112,15 @@ export class DefinitionValidationService {
 
     private validateKSSources(sources: any[], slug: string, fileName: string) {
         if (!Array.isArray(sources)) {
-            console.error(`Knowledge Source '${slug}' in file '${fileName}' is not a named object, invalid format`);
-            process.exit(1);
+            throw new CommandError(`Knowledge Source '${slug}' in file '${fileName}' is not a named object, invalid format`);
         }
 
         if (sources.length === 0) {
-            console.error(`Knowledge Source '${slug}' in file '${fileName}' is empty`);
-            process.exit(1);
+            throw new CommandError(`Knowledge Source '${slug}' in file '${fileName}' is empty`);
         }
 
         if (sources.length > 1) {
-            console.error(`Knowledge Source '${slug}' in file '${fileName}' is duplicated`);
-            process.exit(1);
+            throw new CommandError(`Knowledge Source '${slug}' in file '${fileName}' is duplicated`);
         }
     }
 
@@ -137,8 +129,7 @@ export class DefinitionValidationService {
             return;
         }
 
-        console.error(`File '${fileName}' contains an Knowledge Source with more than one key, invalid format`);
-        process.exit(1);
+        throw new CommandError(`File '${fileName}' contains an Knowledge Source with more than one key, invalid format`);
     }
 
     private mapKnowledgeObject(ko: any, ksSlug: string, fileName: string): KnowledgeObject {
@@ -163,24 +154,20 @@ export class DefinitionValidationService {
             return;
         }
 
-        console.error(`Knowledge Source '${ksSlug}' in file '${fileName}' contains an Knowledge Object with more than one key, invalid format`);
-        process.exit(1);
+        throw new CommandError(`Knowledge Source '${ksSlug}' in file '${fileName}' contains an Knowledge Object with more than one key, invalid format`);
     }
 
     private validateKOObjects(objects: any[], slug: string, ksSlug: string, fileName: string) {
         if (!Array.isArray(objects)) {
-            console.error(`Knowledge Object '${slug}' in Knowledge Source '${ksSlug}' in file '${fileName}' is not a named object, invalid format`);
-            process.exit(1);
+            throw new CommandError(`Knowledge Object '${slug}' in Knowledge Source '${ksSlug}' in file '${fileName}' is not a named object, invalid format`);
         }
 
         if (objects.length === 0) {
-            console.error(`Knowledge Object '${slug}' in Knowledge Source '${ksSlug}' in file '${fileName}' is empty`);
-            process.exit(1);
+            throw new CommandError(`Knowledge Object '${slug}' in Knowledge Source '${ksSlug}' in file '${fileName}' is empty`);
         }
 
         if (objects.length > 1) {
-            console.error(`Knowledge Object '${slug}' in Knowledge Source '${ksSlug}' in file '${fileName}' is duplicated`);
-            process.exit(1);
+            throw new CommandError(`Knowledge Object '${slug}' in Knowledge Source '${ksSlug}' in file '${fileName}' is duplicated`);
         }
     }
 }
