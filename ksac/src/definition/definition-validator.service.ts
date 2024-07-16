@@ -17,6 +17,7 @@ export type KnowledgeSource = {
     name: string,
     description: string,
     knowledge_objects: KnowledgeObject[],
+    fileName: string,
 };
 
 export type Definition = {
@@ -36,6 +37,7 @@ const knowledgeSourceSchema = Joi.object({
     name: Joi.string().required(),
     description: Joi.string().required(),
     knowledgeObjects: Joi.array().items(knowledgeObjectSchema).required(),
+    fileName: Joi.string().required(),
 });
 
 const definitionSchema = Joi.object({
@@ -102,7 +104,7 @@ export class DefinitionValidationService {
         }
 
         const knowledgeSource = {
-            slug, ...source,
+            slug, fileName, ...source,
         };
         delete knowledgeSource.knowledge_object;
         knowledgeSource.knowledgeObjects = source.knowledge_object
