@@ -17,7 +17,7 @@ export type KnowledgeSource = {
     name: string,
     description: string,
     knowledgeObjects: KnowledgeObject[],
-    fileName: string,
+    fileName?: string,
 };
 
 export type Definition = {

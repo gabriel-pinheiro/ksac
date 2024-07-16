@@ -2,6 +2,7 @@ import { injectable } from 'inversify';
 import 'colors';
 import { DefinitionServices } from '../definition/definition.service';
 import { CommandError } from './command.error';
+import { PlanService } from '../plan/plan.service';
 
 const ADD = '+'.green.bold;
 const DELETE = '-'.red.bold;
@@ -12,6 +13,7 @@ const KEEP = '@'.gray.bold;
 export class CommandService {
     constructor(
         private readonly definitionService: DefinitionServices,
+        private readonly planService: PlanService,
     ) { }
 
     async validate(mustShow: boolean) {
@@ -25,7 +27,14 @@ export class CommandService {
     }
 
     async plan() {
-        throw new CommandError('Not implemented yet');
+        const steps = await this.planService.getExecutionPlan();
+        if (!steps.length) {
+            console.log('Knowledge Sources are up to date. No changes needed'.green);
+            return;
+        }
+
+        console.log('The following changes will be made:');
+        steps.forEach(step => console.log(step.description));
     }
 
     async apply() {
