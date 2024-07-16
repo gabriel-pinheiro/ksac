@@ -7,7 +7,7 @@ const debug = require('debug')('ksac:definition-validator:service');
 
 export type KnowledgeObject = {
     slug: string,
-    use_cases: string[],
+    useCases: string[],
     language: string,
     content: string,
 };
@@ -16,7 +16,7 @@ export type KnowledgeSource = {
     slug: string,
     name: string,
     description: string,
-    knowledge_objects: KnowledgeObject[],
+    knowledgeObjects: KnowledgeObject[],
     fileName: string,
 };
 
