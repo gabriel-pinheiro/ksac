@@ -1,5 +1,6 @@
 import { injectable } from 'inversify';
 import 'colors';
+import { DefinitionServices } from '../definition/definition.service';
 
 const ADD = '+'.green.bold;
 const DELETE = '-'.red.bold;
@@ -8,7 +9,12 @@ const KEEP = '@'.gray.bold;
 
 @injectable()
 export class CommandService {
+    constructor(
+        private readonly definitionService: DefinitionServices,
+    ) { }
+
     async validate() {
+        await this.definitionService.getDefinitions();
         console.log('The definitions are valid');
     }
 

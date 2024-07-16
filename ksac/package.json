@@ -31,10 +31,13 @@
     "typescript": "^5.5.3"
   },
   "dependencies": {
+    "@hapi/hoek": "^11.0.4",
     "colors": "^1.4.0",
     "commander": "^12.1.0",
     "debug": "^4.3.5",
+    "hcl-parser": "^0.1.1",
     "inversify": "^6.0.2",
+    "joi": "^17.13.3",
     "reflect-metadata": "^0.2.2",
     "semver": "^7.6.2"
   }
