@@ -15,7 +15,7 @@ export class CommandService {
 
     async validate() {
         await this.definitionService.getDefinitions();
-        console.log('The definitions are valid');
+        console.log('The definitions are valid'.green);
     }
 
     async plan() {
