@@ -14,9 +14,13 @@ export class CommandService {
         private readonly definitionService: DefinitionServices,
     ) { }
 
-    async validate() {
+    async validate(mustShow: boolean) {
         const definitions = await this.definitionService.getDefinitions();
-        console.log(JSON.stringify(definitions, null, 2));
+
+        if(mustShow) {
+            console.log(JSON.stringify(definitions, null, 2));
+        }
+
         console.log('The definitions are valid'.green);
     }
 

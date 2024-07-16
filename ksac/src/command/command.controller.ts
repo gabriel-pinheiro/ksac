@@ -14,8 +14,9 @@ export class CommandController implements Controller {
     async registerCommands() {
         this.command
             .command('validate')
+            .option('-s, --show', 'Show the definitions after validation')
             .description('Checks the KSaC definitions for errors or warnings')
-            .action(() => this.errorProxy(() => this.service.validate()));
+            .action(({ show }) => this.errorProxy(() => this.service.validate(show)));
 
         this.command
             .command('plan')
