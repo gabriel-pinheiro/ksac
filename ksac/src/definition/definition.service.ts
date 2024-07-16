@@ -19,6 +19,9 @@ export class DefinitionServices {
     async getDefinitions(): Promise<MergedDefinition> {
         debug('loading definition files');
         const files = await this.fileService.getDefinitionFiles();
+        if (!files.length) {
+            throw new CommandError('No definition files found. Make sure to create your definitions with the .hcl extension');
+        }
         debug(`${files.length} definition files found, parsing`);
         const parsedFiles = await this.fileService.parseFiles(files);
         debug('definitions parsed, mapping content');
