@@ -4,6 +4,8 @@ import { Controller } from 'src/controller';
 import { CommandService } from './command.service';
 import { CommandError } from './command.error';
 
+const debug = require('debug')('ksac:command:controller');
+
 @injectable()
 export class CommandController implements Controller {
     constructor(
@@ -53,7 +55,20 @@ export class CommandController implements Controller {
                 process.exit(1);
             }
 
-            throw e;
+            const data = e.response?.data ?? {};
+            const dataKeyCount = Object.keys(data).length;
+            if (dataKeyCount) {
+                console.error("A request error occurred. Run with 'DEBUG=ksac*' for more info".red);
+                console.error(e.message.red);
+                console.error(JSON.stringify(data, null, 2));
+                debug(e);
+                process.exit(1);
+            }
+
+            console.error("An unexpected error occurred. Run with 'DEBUG=ksac*' for more info".red);
+            console.error(e.message.red);
+            debug(e);
+            process.exit(1);
         }
     }
 }
