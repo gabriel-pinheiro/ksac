@@ -17,7 +17,8 @@ export class PlanService {
     ) { }
 
     async getExecutionPlan(): Promise<Step[]> {
-        debug('getting execution plan');
+        debug('getting definitions');
+        console.log('Building definitions');
         const definitions = await this.definitionService.getDefinitions();
         const steps = [];
 
@@ -31,6 +32,7 @@ export class PlanService {
 
     private async getKnowledgeSourceSteps(desired: KnowledgeSource): Promise<Step[]> {
         debug(`getting steps for knowledge source '${desired.slug}'`);
+        console.log(`Creating plan for Knowledge Source '${desired.slug.bold}'`);
         const steps = [];
 
         const current = await this.fetchKnowledgeSource(desired.slug);
@@ -45,6 +47,10 @@ export class PlanService {
         if(mustUpdate) {
             debug(`knowledge source '${desired.slug}' must be updated, adding update step`);
             steps.push(UpdateKSStep.of(current, desired));
+        }
+
+        if(!steps.length) {
+            debug(`knowledge source '${desired.slug}' is up to date, no steps added`);
         }
 
         return steps;

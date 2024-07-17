@@ -57,6 +57,8 @@ export class CommandService {
 
     async plan() {
         const steps = await this.planService.getExecutionPlan();
+        console.log('');
+
         if (!steps.length) {
             console.log('Knowledge Sources are up to date. No changes needed'.green);
             return;
