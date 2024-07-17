@@ -5,6 +5,8 @@ import { CommandError } from './command.error';
 import { PlanService } from '../plan/plan.service';
 import { InquirerService } from '../inquirer/inquirer.service';
 import { AuthService } from '../auth/auth.service';
+import { Step } from '../plan/steps/step';
+import { ConciliationService } from '../conciliation/conciliation.service';
 
 const ADD = '+'.green.bold;
 const DELETE = '-'.red.bold;
@@ -18,6 +20,7 @@ export class CommandService {
         private readonly planService: PlanService,
         private readonly inquirerService: InquirerService,
         private readonly authService: AuthService,
+        private readonly conciliationService: ConciliationService,
     ) { }
 
     async login() {
@@ -57,6 +60,28 @@ export class CommandService {
 
     async plan() {
         const steps = await this.planService.getExecutionPlan();
+        this.printPlan(steps);
+    }
+
+    async apply() {
+        const steps = await this.planService.getExecutionPlan();
+        this.printPlan(steps);
+
+        if (!steps.length) {
+            return;
+        }
+
+        console.log('\nExecuting changes:');
+        await this.conciliationService.applyPlan(steps);
+        console.log('');
+        console.log('Changes applied'.green);
+    }
+
+    async destroy() {
+        throw new CommandError('Not implemented yet');
+    }
+
+    private printPlan(steps: Step[]) {
         console.log('');
 
         if (!steps.length) {
@@ -66,13 +91,5 @@ export class CommandService {
 
         console.log('The following changes will be made:');
         steps.forEach(step => console.log(step.description));
-    }
-
-    async apply() {
-        throw new CommandError('Not implemented yet');
-    }
-
-    async destroy() {
-        throw new CommandError('Not implemented yet');
     }
 }

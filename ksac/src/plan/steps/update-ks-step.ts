@@ -1,6 +1,8 @@
+import { ConciliationService } from "../../conciliation/conciliation.service";
 import { KnowledgeSource } from "../../definition/definition-validator.service";
 import { Step } from "./step";
 
+const ARROW = ' >'.blue.bold;
 const CHANGE = '[~]'.yellow.bold;
 export const FIELDS = ['name', 'description'];
 
@@ -12,8 +14,9 @@ export class UpdateKSStep extends Step {
         private readonly desired: PartialKnowledgeSource,
     ) { super() }
 
-    async run(): Promise<void> {
-        throw new Error('Method not implemented.');
+    async run(service: ConciliationService): Promise<void> {
+        console.log(`${ARROW} Updating Knowledge Source '${this.current.slug.bold}'`);
+        await service.updateKnowledgeSource(this.current.slug, this.desired);
     }
 
     get description(): string {

@@ -1,6 +1,8 @@
+import { ConciliationService } from "../../conciliation/conciliation.service";
 import { KnowledgeSource } from "../../definition/definition-validator.service";
 import { Step } from "./step";
 
+const ARROW = ' >'.blue.bold;
 const ADD = '[+]'.green.bold;
 
 export class CreateKSStep extends Step {
@@ -8,8 +10,9 @@ export class CreateKSStep extends Step {
         private readonly knowledgeSource: KnowledgeSource,
     ) { super() }
 
-    async run(): Promise<void> {
-        throw new Error('Method not implemented.');
+    async run(service: ConciliationService): Promise<void> {
+        console.log(`${ARROW} Creating Knowledge Source '${this.knowledgeSource.slug.bold}'`);
+        await service.createKnowledgeSource(this.knowledgeSource);
     }
 
     get description(): string {
