@@ -5,5 +5,6 @@ export type {
     KnowledgeSource,
     KnowledgeSourceType,
     KnowledgeSourceVisibilityLevel,
+    KnowledgeObject,
     StackSpotOptions
 } from './stackspot-api';

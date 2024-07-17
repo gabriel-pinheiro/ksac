@@ -29,6 +29,18 @@ export type KnowledgeSource = {
     visibility_level: KnowledgeSourceVisibilityLevel;
 };
 
+export type KnowledgeObject = {
+    page_content: string;
+    metadata: {
+        updated: string;
+        language: string;
+        hint: string;
+        standalone: boolean;
+        attributes: null;
+        custom_id: string;
+    };
+};
+
 /**
  * A raw connector for the StackSpot API, use `StackSpot` for a more user-friendly interface.
  */
@@ -116,6 +128,13 @@ export class StackSpotAPI {
         });
     }
 
+    /**
+     * Retrieves an existing knowledge source.
+     *
+     * @param jwt - The JWT for authorization, obtained from `StackSpotAPI#authenticate`.
+     * @param slug - The slug identifier for the knowledge source.
+     * @returns A promise that resolves to the knowledge source.
+     */
     async getKnowledgeSource(
         jwt: string,
         slug: string,
@@ -138,6 +157,48 @@ export class StackSpotAPI {
         slug: string
     ): Promise<AxiosResponse> {
         return await this.api.post(`/v1/knowledge-sources/${slug}/share`, {}, {
+            headers: {
+                Authorization: `Bearer ${jwt}`,
+            },
+        });
+    }
+
+    /**
+     * Updates an existing knowledge source.
+     *
+     * @param jwt - The JWT for authorization, obtained from `StackSpotAPI#authenticate`.
+     * @param slug - The slug identifier for the knowledge source.
+     * @param name - The new name of the knowledge source.
+     * @param description - The new description of the knowledge source.
+     */
+    async updateKnowledgeSource(
+        jwt: string,
+        slug: string,
+        name: string,
+        description: string,
+    ): Promise<AxiosResponse> {
+        return await this.api.patch(`/v1/knowledge-sources/${slug}`, {
+            name,
+            description,
+        }, {
+            headers: {
+                Authorization: `Bearer ${jwt}`,
+            },
+        });
+    }
+
+    /**
+     * Retrieves all knowledge objects in a knowledge source.
+     *
+     * @param jwt - The JWT for authorization, obtained from `StackSpotAPI#authenticate`.
+     * @param slug - The slug identifier for the knowledge source.
+     * @returns A promise that resolves to the knowledge objects.
+     */
+    async getKnowledgeObjects(
+        jwt: string,
+        slug: string,
+    ): Promise<AxiosResponse<KnowledgeObject[]>> {
+        return await this.api.get(`/v1/knowledge-sources/${slug}/objects`, {
             headers: {
                 Authorization: `Bearer ${jwt}`,
             },

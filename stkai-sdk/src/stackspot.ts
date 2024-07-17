@@ -1,5 +1,5 @@
 import { Synchronize } from "@mocko/sync";
-import { KnowledgeSource, KnowledgeSourceType, StackSpotAPI, StackSpotOptions } from "./stackspot-api";
+import { KnowledgeObject, KnowledgeSource, KnowledgeSourceType, StackSpotAPI, StackSpotOptions } from "./stackspot-api";
 
 const AUTHENTICATION_JITTER = 3000;
 
@@ -59,12 +59,59 @@ export class StackSpot {
         );
     }
 
+    /**
+     * Retrieves an existing knowledge source.
+     *
+     * @param slug - The slug identifier for the knowledge source.
+     * @returns A promise that resolves to the knowledge source.
+     */
     async getKnowledgeSource(slug: string): Promise<KnowledgeSource> {
         await this.assertAuthenticated();
         const { data } = await this.api.getKnowledgeSource(this.token, slug);
         return data;
     }
 
+    /**
+     * Updates an existing knowledge source.
+     *
+     * @param slug - The slug identifier for the knowledge source.
+     * @param name - The name of the knowledge source.
+     * @param description - The description of the knowledge source.
+     */
+    async updateKnowledgeSource(
+        slug: string,
+        name: string,
+        description: string,
+    ): Promise<void> {
+        await this.assertAuthenticated();
+        await this.api.updateKnowledgeSource(
+            this.token,
+            slug,
+            name,
+            description
+        );
+    }
+
+    /**
+     * Retrieves all knowledge objects in a knowledge source.
+     *
+     * @param slug - The slug identifier for the knowledge source.
+     * @returns A promise that resolves to the knowledge objects.
+     */
+    async getKnowledgeObjects(slug: string): Promise<KnowledgeObject[]> {
+        await this.assertAuthenticated();
+        const { data } = await this.api.getKnowledgeObjects(this.token, slug);
+        return data;
+    }
+
+    /**
+     * Creates a new snippet in a knowledge source.
+     *
+     * @param slug - The slug identifier for the knowledge source.
+     * @param code - The code content of the snippet.
+     * @param language - The language of the code snippet.
+     * @param useCase - The use case of the code snippet.
+     */
     async createSnippet(
         slug: string,
         code: string,
