@@ -4,6 +4,7 @@ import { StackSpot } from 'stkai-sdk';
 import os from 'os';
 import path from 'path';
 import { promises } from 'fs';
+import { Synchronize } from "@mocko/sync";
 
 const { mkdir, writeFile, readFile, rm } = promises;
 const debug = require('debug')('ksac:auth:service');
@@ -36,6 +37,7 @@ export class AuthService {
         await rm(AUTH_FILE, { force: true });
     }
 
+    @Synchronize()
     async getStackSpot(): Promise<StackSpot> {
         if (this.stackspot) {
             debug('using cached stackspot instance');
