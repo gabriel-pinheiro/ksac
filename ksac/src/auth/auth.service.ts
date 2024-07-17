@@ -20,6 +20,7 @@ type Credentials = {
 
 @injectable()
 export class AuthService {
+    private stackspot: StackSpot;
 
     async login(
         realm: string,
@@ -36,13 +37,21 @@ export class AuthService {
     }
 
     async getStackSpot(): Promise<StackSpot> {
+        if (this.stackspot) {
+            debug('using cached stackspot instance');
+            return this.stackspot;
+        }
+
         debug('reading credentials');
         const {
             realm,
             clientId,
             clientSecret
         } = await this.getCredentials();
-        return new StackSpot(realm, clientId, clientSecret);
+
+        debug('creating stackspot instance');
+        this.stackspot = new StackSpot(realm, clientId, clientSecret);
+        return this.stackspot;
     }
 
     private async getCredentials(): Promise<Credentials> {

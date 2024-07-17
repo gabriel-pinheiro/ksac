@@ -82,8 +82,8 @@ export class DefinitionServices {
         if (invalidSlugs.length) {
             throw new CommandError(`Invalid knowledge object slug(s) '${invalidSlugs.join(', ')}' in source '${ks.slug}' found on ${ks.fileName}`);
         }
-        if (!SLUG_REGEX.test(ks.slug)) {
-            throw new CommandError(`Invalid knowledge source slug '${ks.slug}' found on ${ks.fileName}`);
-        }
+        // if (!SLUG_REGEX.test(ks.slug)) {
+        //     throw new CommandError(`Invalid knowledge source slug '${ks.slug}' found on ${ks.fileName}`);
+        // }
     }
 }

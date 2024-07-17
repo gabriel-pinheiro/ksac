@@ -4,10 +4,12 @@ import { Step } from "./step";
 const CHANGE = '[~]'.yellow.bold;
 export const FIELDS = ['name', 'description'];
 
+export type PartialKnowledgeSource = Pick<KnowledgeSource, 'slug' | 'name' | 'description'>;
+
 export class UpdateKSStep extends Step {
     private constructor(
-        private readonly current: KnowledgeSource,
-        private readonly desired: KnowledgeSource,
+        private readonly current: PartialKnowledgeSource,
+        private readonly desired: PartialKnowledgeSource,
     ) { super() }
 
     async run(): Promise<void> {
@@ -24,8 +26,8 @@ export class UpdateKSStep extends Step {
     }
 
     static of(
-        current: KnowledgeSource,
-        desired: KnowledgeSource
+        current: PartialKnowledgeSource,
+        desired: PartialKnowledgeSource
     ): UpdateKSStep {
         return new UpdateKSStep(current, desired);
     }
