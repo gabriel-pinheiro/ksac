@@ -1,6 +1,6 @@
 {
   "name": "ksac",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "description": "Knowledge Source as Code for StackSpot AI",
   "main": "dist/index.js",
   "bin": {
@@ -37,9 +37,11 @@
     "commander": "^12.1.0",
     "debug": "^4.3.5",
     "hcl-parser": "^0.1.1",
+    "inquirer": "^10.0.2",
     "inversify": "^6.0.2",
     "joi": "^17.13.3",
     "reflect-metadata": "^0.2.2",
-    "semver": "^7.6.2"
+    "semver": "^7.6.2",
+    "stkai-sdk": "^1.0.0"
   }
 }

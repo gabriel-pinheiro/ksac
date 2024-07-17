@@ -13,6 +13,11 @@ export class CommandController implements Controller {
 
     async registerCommands() {
         this.command
+            .command('login')
+            .description('Set the credentials to access the StackSpot AI API')
+            .action(() => this.errorProxy(() => this.service.login()));
+
+        this.command
             .command('validate')
             .option('-s, --show', 'Show the definitions after validation')
             .description('Checks the KSaC definitions for errors or warnings')
@@ -32,6 +37,11 @@ export class CommandController implements Controller {
             .command('destroy')
             .description('Destroys the resources defined in the KSaC definitions')
             .action(() => this.errorProxy(() => this.service.destroy()));
+
+        this.command
+            .command('logout')
+            .description('Remove the saved credentials')
+            .action(() => this.errorProxy(() => this.service.logout()));
     }
 
     private async errorProxy<R, F extends (...args: any[]) => Promise<R>>(fn: F): Promise<R> {
