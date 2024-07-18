@@ -5,14 +5,20 @@ if(!semver.satisfies(process.version, '>=12')) {
 }
 
 import 'reflect-metadata';
+import updateNotifier from 'simple-update-notifier';
 import { Container } from 'inversify';
 import { CommandController } from './command/command.controller';
 import { Command } from 'commander';
+import * as Hoek from '@hapi/hoek';
 const pkg = require('../package.json');
 
 const debug = require('debug')('ksac:main');
+const debugUpdate = require('debug')('ksac:updater');
 
 async function bootstrap() {
+    debug('checking for updates');
+    updateCheck();
+
     debug('creating Commander');
     const command = new Command()
         .version(`ksac/${pkg.version} node/${process.version}`);
@@ -32,6 +38,17 @@ async function bootstrap() {
 
     debug('parsing/starting command');
     command.parse();
+}
+
+async function updateCheck() {
+    debugUpdate('scheduling update check');
+    await Hoek.wait(50);
+
+    debugUpdate('starting update check');
+    updateNotifier({ pkg })
+        .then(() => debugUpdate('update check done'));
+
+    debugUpdate('update check started');
 }
 
 bootstrap().catch((err) => {
