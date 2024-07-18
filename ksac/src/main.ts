@@ -4,6 +4,9 @@ if(!semver.satisfies(process.version, '>=12')) {
   process.exit(1);
 }
 
+const debug = require('debug')('ksac:main');
+const debugUpdate = require('debug')('ksac:updater');
+debug('importing dependencies');
 import 'reflect-metadata';
 import updateNotifier from 'simple-update-notifier';
 import { Container } from 'inversify';
@@ -11,9 +14,6 @@ import { CommandController } from './command/command.controller';
 import { Command } from 'commander';
 import * as Hoek from '@hapi/hoek';
 const pkg = require('../package.json');
-
-const debug = require('debug')('ksac:main');
-const debugUpdate = require('debug')('ksac:updater');
 
 async function bootstrap() {
     debug('checking for updates');
