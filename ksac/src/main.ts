@@ -1,6 +1,6 @@
 import * as semver from 'semver';
-if(!semver.satisfies(process.version, '>=12')) {
-  console.error(`Your NodeJS version (${process.version}) is too old for ksac\nUse at least NodeJS 12`);
+if(!semver.satisfies(process.version, '>=16')) {
+  console.error(`Your NodeJS version (${process.version}) is too old for ksac\nUse at least NodeJS 16`);
   process.exit(1);
 }
 
