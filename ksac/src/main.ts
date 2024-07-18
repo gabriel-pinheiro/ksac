@@ -6,6 +6,8 @@ if(!semver.satisfies(process.version, '>=16')) {
 
 const debug = require('debug')('ksac:main');
 const debugUpdate = require('debug')('ksac:updater');
+
+const startedAt = Date.now();
 debug('importing dependencies');
 import 'reflect-metadata';
 import updateNotifier from 'simple-update-notifier';
@@ -37,7 +39,9 @@ async function bootstrap() {
         .registerCommands();
 
     debug('parsing/starting command');
-    command.parse();
+    await command.parseAsync();
+
+    debug(`command finished in ${Date.now() - startedAt}ms`);
 }
 
 async function updateCheck() {
