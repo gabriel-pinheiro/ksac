@@ -79,6 +79,16 @@ export class PlanService {
 
         const steps = [];
 
+        for (const current of currentKOs) {
+            const desired = desiredKOs.find(ko => this.compareKOs(current, ko));
+            if (desired) {
+                continue;
+            }
+
+            debug(`knowledge object '${current.metadata.custom_id}' not defined, adding delete step`);
+            steps.push(DeleteKOStep.of(ks.slug, current));
+        }
+
         for (const desired of desiredKOs) {
             const current = currentKOs.find(ko => this.compareKOs(ko, desired));
             if (current) {
@@ -88,16 +98,6 @@ export class PlanService {
 
             debug(`knowledge object '${desired.slug}' not found, adding create step`);
             steps.push(CreateKOStep.of(ks.slug, desired));
-        }
-
-        for (const current of currentKOs) {
-            const desired = desiredKOs.find(ko => this.compareKOs(current, ko));
-            if (desired) {
-                continue;
-            }
-
-            debug(`knowledge object '${current.metadata.custom_id}' not defined, adding delete step`);
-            steps.push(DeleteKOStep.of(ks.slug, current));
         }
 
         return steps;
