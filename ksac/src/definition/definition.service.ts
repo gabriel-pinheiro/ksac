@@ -7,7 +7,7 @@ const debug = require('debug')('ksac:definition:service');
 
 export type MergedDefinition = Omit<Definition, 'fileName'>;
 
-const SLUG_REGEX = /^(?!-)[a-z0-9]{3,30}(?:-[a-z0-9]+)*[a-z0-9]$/;
+const SLUG_REGEX = /^[a-z0-9\-]+$/;
 
 @injectable()
 export class DefinitionServices {
@@ -77,13 +77,32 @@ export class DefinitionServices {
     private validateSlugs(ks: KnowledgeSource) {
         const invalidSlugs = ks.knowledgeObjects
             .map(ko => ko.slug)
-            .filter(slug => !SLUG_REGEX.test(slug));
+            .map(slug => this.validateSlug(slug, ks))
+            .filter(error => Boolean(error));
 
         if (invalidSlugs.length) {
-            throw new CommandError(`Invalid knowledge object slug(s) '${invalidSlugs.join(', ')}' in source '${ks.slug}' found on ${ks.fileName}`);
+            throw new CommandError(`Invalid knowledge object slug(s) found in knowledge source '${ks.slug}' on file '${ks.fileName}:'\n${invalidSlugs.join('\n')}`);
         }
-        // if (!SLUG_REGEX.test(ks.slug)) {
-        //     throw new CommandError(`Invalid knowledge source slug '${ks.slug}' found on ${ks.fileName}`);
-        // }
+
+        const ksSlugError = this.validateSlug(ks.slug, ks);
+        if (ksSlugError) {
+            throw new CommandError(`Invalid knowledge source slug '${ks.slug}' found on file '${ks.fileName}':\n${ksSlugError}`);
+        }
+    }
+
+    private validateSlug(slug: string, ks: KnowledgeSource): string {
+        if (slug.length < 2) {
+            return `'${slug}' is too short`;
+        }
+
+        if (slug.length > 36) {
+            return `'${slug}' is too long`;
+        }
+
+        if (!SLUG_REGEX.test(slug)) {
+            return `'${slug}' is an invalid slug`;
+        }
+
+        return '';
     }
 }
