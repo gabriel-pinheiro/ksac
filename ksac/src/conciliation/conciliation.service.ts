@@ -2,6 +2,7 @@ import { injectable } from "inversify";
 import { Step } from "../plan/steps/step";
 import { KnowledgeObject, KnowledgeSource } from "../definition/definition-validator.service";
 import { AuthService } from "../auth/auth.service";
+import { CommandError } from "../command/command.error";
 
 const debug = require('debug')('ksac:conciliation:service');
 
@@ -49,5 +50,26 @@ export class ConciliationService {
         const stk = await this.authService.getStackSpot();
         debug(`deleting knowledge object '${koSlug}'`);
         await stk.deleteKnowledgeObject(ksSlug, koSlug);
+    }
+
+    async deleteKnowledgeSource(slug: string) {
+        const stk = await this.authService.getStackSpot();
+
+        try {
+            debug(`deleting knowledge source '${slug}'`);
+            await stk.deleteKnowledgeSource(slug);
+        } catch (e) {
+            const data = e.response?.data;
+            if (data?.type === 'NotFoundError') {
+                debug(`knowledge source '${slug}' not found, skipping`);
+                return;
+            }
+
+            if (data?.message && data?.code) {
+                throw new CommandError(`Failed to delete knowledge source '${slug}', ${data.message} (${data.code})`);
+            }
+
+            throw e;
+        }
     }
 }

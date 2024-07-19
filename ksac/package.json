@@ -44,6 +44,6 @@
     "joi": "^17.13.3",
     "reflect-metadata": "^0.2.2",
     "semver": "^7.6.2",
-    "stkai-sdk": "^1.2.0"
+    "stkai-sdk": "^1.3.0"
   }
 }

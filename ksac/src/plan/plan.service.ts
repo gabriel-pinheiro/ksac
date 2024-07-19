@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { DefinitionServices } from "../definition/definition.service";
+import { DefinitionServices, MergedDefinition } from "../definition/definition.service";
 import { KnowledgeObject, KnowledgeSource } from "../definition/definition-validator.service";
 import { CreateKSStep } from "./steps/create-ks-step";
 import { FIELDS, PartialKnowledgeSource, UpdateKSStep } from "./steps/update-ks-step";
@@ -10,6 +10,7 @@ import { Step } from "./steps/step";
 import { AuthService } from "../auth/auth.service";
 import { CommandError } from "../command/command.error";
 import { KnowledgeObject as ApiKnowledgeObject } from "stkai-sdk";
+import { DeleteKSStep } from "./steps/delete-ks-step";
 
 const debug = require('debug')('ksac:plan:service');
 
@@ -20,12 +21,16 @@ export class PlanService {
         private readonly authService: AuthService,
     ) { }
 
-    async getExecutionPlan(): Promise<Step[]> {
+    async getExecutionPlan(isDestroy?: boolean): Promise<Step[]> {
         debug('getting definitions');
         console.log('Building definitions');
         const definitions = await this.definitionService.getDefinitions();
-        const steps = [];
 
+        if (isDestroy) {
+            return this.getDestroyPlan(definitions);
+        }
+
+        const steps = [];
         for (const ks of definitions.knowledgeSources) {
             const subSteps = await this.getKnowledgeSourceSteps(ks);
             steps.push(...subSteps);
@@ -154,5 +159,11 @@ export class PlanService {
         desired: PartialKnowledgeSource
     ): boolean {
         return FIELDS.some(field => current[field] !== desired[field]);
+    }
+
+    private getDestroyPlan(definitions: MergedDefinition): Step[] {
+        return definitions
+            .knowledgeSources
+            .map(ks => DeleteKSStep.of(ks));
     }
 }

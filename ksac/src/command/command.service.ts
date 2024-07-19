@@ -7,11 +7,7 @@ import { InquirerService } from '../inquirer/inquirer.service';
 import { AuthService } from '../auth/auth.service';
 import { Step } from '../plan/steps/step';
 import { ConciliationService } from '../conciliation/conciliation.service';
-
-const ADD = '+'.green.bold;
-const DELETE = '-'.red.bold;
-const MODIFY = '~'.yellow.bold;
-const KEEP = '@'.gray.bold;
+import * as Hoek from '@hapi/hoek';
 
 @injectable()
 export class CommandService {
@@ -63,22 +59,25 @@ export class CommandService {
         this.printPlan(steps);
     }
 
-    async apply() {
-        const steps = await this.planService.getExecutionPlan();
+    async apply(isDestroy?: boolean) {
+        const steps = await this.planService.getExecutionPlan(isDestroy);
         this.printPlan(steps);
 
         if (!steps.length) {
             return;
         }
 
+        if (isDestroy) {
+            console.error('\nAll the Knowledge Sources above and their'.yellow);
+            console.error('Knowledge Objects will be destroyed in 2 seconds.'.yellow);
+            console.error('Press Ctrl+C to cancel'.yellow.bold);
+            await Hoek.wait(2000);
+        }
+
         console.log('\nExecuting changes:');
         await this.conciliationService.applyPlan(steps);
         console.log('');
         console.log('Changes applied'.green);
-    }
-
-    async destroy() {
-        throw new CommandError('Not implemented yet');
     }
 
     private printPlan(steps: Step[]) {

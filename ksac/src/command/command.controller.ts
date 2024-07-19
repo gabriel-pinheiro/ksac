@@ -38,7 +38,7 @@ export class CommandController implements Controller {
         this.command
             .command('destroy')
             .description('Destroys the resources defined in the KSaC definitions')
-            .action(() => this.errorProxy(() => this.service.destroy()));
+            .action(() => this.errorProxy(() => this.service.apply(true)));
 
         this.command
             .command('logout')
