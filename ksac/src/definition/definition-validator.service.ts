@@ -146,7 +146,8 @@ export class DefinitionValidationService {
             slug, ...object,
         };
         delete knowledgeObject.use_cases;
-        knowledgeObject.useCases = object.use_cases;
+        knowledgeObject.useCases = object.use_cases || [];
+        knowledgeObject.language = knowledgeObject.language || 'markdown';
         knowledgeObject.content = knowledgeObject.content.trim();
 
         return knowledgeObject;
