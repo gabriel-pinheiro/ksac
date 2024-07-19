@@ -44,4 +44,10 @@ export class ConciliationService {
             ko.useCases.join('\n'),
         );
     }
+
+    async deleteKnowledgeObject(ksSlug: string, koSlug: string) {
+        const stk = await this.authService.getStackSpot();
+        debug(`deleting knowledge object '${koSlug}'`);
+        await stk.deleteKnowledgeObject(ksSlug, koSlug);
+    }
 }

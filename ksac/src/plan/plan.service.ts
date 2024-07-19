@@ -97,7 +97,7 @@ export class PlanService {
             }
 
             debug(`knowledge object '${current.metadata.custom_id}' not defined, adding delete step`);
-            steps.push(DeleteKOStep.of(current));
+            steps.push(DeleteKOStep.of(ks.slug, current));
         }
 
         return steps;
