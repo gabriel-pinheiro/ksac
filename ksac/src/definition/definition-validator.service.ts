@@ -147,6 +147,7 @@ export class DefinitionValidationService {
         };
         delete knowledgeObject.use_cases;
         knowledgeObject.useCases = object.use_cases;
+        knowledgeObject.content = knowledgeObject.content.trim();
 
         return knowledgeObject;
     }
