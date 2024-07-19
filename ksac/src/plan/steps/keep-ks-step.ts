@@ -2,7 +2,6 @@ import { ConciliationService } from "../../conciliation/conciliation.service";
 import { KnowledgeSource } from "../../definition/definition-validator.service";
 import { Step } from "./step";
 
-const ARROW = ' >'.blue.bold;
 const KEEP = '[@]'.gray.bold;
 
 export class KeepKSStep extends Step {
@@ -10,9 +9,7 @@ export class KeepKSStep extends Step {
         private readonly knowledgeSource: KnowledgeSource,
     ) { super() }
 
-    async run(_service: ConciliationService): Promise<void> {
-        console.log(`${ARROW} On Knowledge Source '${this.knowledgeSource.slug.bold}'`);
-    }
+    async run(_service: ConciliationService): Promise<void> { }
 
     get description(): string {
         return `  ${KEEP} On Knowledge Source '${this.knowledgeSource.slug.bold}'`;

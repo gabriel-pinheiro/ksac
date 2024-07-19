@@ -87,7 +87,7 @@ export class PlanService {
             }
 
             debug(`knowledge object '${desired.slug}' not found, adding create step`);
-            steps.push(CreateKOStep.of(desired));
+            steps.push(CreateKOStep.of(ks.slug, desired));
         }
 
         for (const current of currentKOs) {

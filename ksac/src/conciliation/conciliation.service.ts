@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { Step } from "../plan/steps/step";
-import { KnowledgeSource } from "../definition/definition-validator.service";
+import { KnowledgeObject, KnowledgeSource } from "../definition/definition-validator.service";
 import { AuthService } from "../auth/auth.service";
 
 const debug = require('debug')('ksac:conciliation:service');
@@ -32,5 +32,16 @@ export class ConciliationService {
         const stk = await this.authService.getStackSpot();
         debug(`updating knowledge source '${slug}'`);
         await stk.updateKnowledgeSource(slug, ks.name, ks.description);
+    }
+
+    async createKnowledgeObject(ksSlug: string, ko: KnowledgeObject) {
+        const stk = await this.authService.getStackSpot();
+        debug(`creating knowledge object '${ko.slug}'`);
+        await stk.createSnippet(
+            ksSlug,
+            ko.content,
+            ko.language,
+            ko.useCases.join('\n'),
+        );
     }
 }
