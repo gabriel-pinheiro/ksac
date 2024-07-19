@@ -129,6 +129,20 @@ export class StackSpot {
     }
 
     /**
+     * Deletes a knowledge object from a knowledge source.
+     *
+     * @param slug - The slug identifier for the knowledge source.
+     * @param koId - The identifier for the knowledge object.
+     */
+    async deleteKnowledgeObject(
+        slug: string,
+        koId: string,
+    ): Promise<void> {
+        await this.assertAuthenticated();
+        await this.api.deleteKnowledgeObject(this.token, slug, koId);
+    }
+
+    /**
      * Authenticates the client if not already authenticated. Returns an error if authentication fails.
      */
     @Synchronize()

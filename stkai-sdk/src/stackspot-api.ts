@@ -231,4 +231,23 @@ export class StackSpotAPI {
             },
         });
     }
+
+    /**
+     * Deletes a knowledge object from a knowledge source.
+     *
+     * @param jwt - The JWT for authorization, obtained from `StackSpotAPI#authenticate`.
+     * @param slug - The slug identifier for the knowledge source.
+     * @param koId - The identifier for the knowledge object.
+     */
+    async deleteKnowledgeObject(
+        jwt: string,
+        slug: string,
+        koId: string,
+    ): Promise<AxiosResponse> {
+        return await this.api.delete(`/v1/knowledge-sources/${slug}/objects/${koId}`, {
+            headers: {
+                Authorization: `Bearer ${jwt}`,
+            },
+        });
+    }
 }
