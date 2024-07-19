@@ -129,6 +129,16 @@ export class StackSpot {
     }
 
     /**
+     * Deletes a knowledge source.
+     *
+     * @param slug - The slug identifier for the knowledge source.
+     */
+    async deleteKnowledgeSource(slug: string): Promise<void> {
+        await this.assertAuthenticated();
+        await this.api.deleteKnowledgeSource(this.token, slug);
+    }
+
+    /**
      * Deletes a knowledge object from a knowledge source.
      *
      * @param slug - The slug identifier for the knowledge source.
