@@ -45,6 +45,8 @@ const definitionSchema = Joi.object({
     fileName: Joi.string().required(),
 });
 
+const WARN = 'Warning!'.yellow.bold;
+
 
 @injectable()
 export class DefinitionValidationService {
@@ -79,16 +81,19 @@ export class DefinitionValidationService {
     }
 
     private validateDefinitionFormat(file: DefinitionFile) {
+        const wrongKeys = Object.keys(file.content)
+            .filter(key => key !== 'knowledge_source');
+        if (wrongKeys.length) {
+            throw new CommandError(`File '${file.name}' contains invalid keys: ${wrongKeys.join(', ')}`);
+        }
+
         if (!file.content.hasOwnProperty('knowledge_source')) {
-            throw new CommandError(`File '${file.name}' does not contain 'knowledge_source's`);
+            console.error(`${WARN} File '${file.name}' does not contain 'knowledge_source's`);
+            file.content.knowledge_source = [];
         }
 
         if (!Array.isArray(file.content.knowledge_source)) {
             throw new CommandError(`'knowledge_source' in file '${file.name}' is not a named object, invalid format`);
-        }
-
-        if (Object.keys(file.content).length !== 1) {
-            throw new CommandError(`File '${file.name}' contains other properties than 'knowledge_source'`);
         }
     }
 
