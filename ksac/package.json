@@ -37,13 +37,13 @@
     "colors": "^1.4.0",
     "commander": "^12.1.0",
     "debug": "^4.3.5",
+    "gp-simple-update-notifier": "^2.0.0",
     "hcl-parser": "^0.1.1",
     "inquirer": "^10.0.2",
     "inversify": "^6.0.2",
     "joi": "^17.13.3",
     "reflect-metadata": "^0.2.2",
     "semver": "^7.6.2",
-    "simple-update-notifier": "^2.0.0",
     "stkai-sdk": "^1.2.0"
   }
 }

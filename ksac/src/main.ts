@@ -10,12 +10,13 @@ const debugUpdate = require('debug')('ksac:updater');
 const startedAt = Date.now();
 debug('importing dependencies');
 import 'reflect-metadata';
-import updateNotifier from 'simple-update-notifier';
+import updateNotifier from 'gp-simple-update-notifier';
 import { Container } from 'inversify';
 import { CommandController } from './command/command.controller';
 import { Command } from 'commander';
-import * as Hoek from '@hapi/hoek';
 const pkg = require('../package.json');
+
+let notifyUpdate: () => void;
 
 async function bootstrap() {
     debug('checking for updates');
@@ -41,16 +42,22 @@ async function bootstrap() {
     debug('parsing/starting command');
     await command.parseAsync();
 
+    if (notifyUpdate) {
+        debug('showing update message');
+        notifyUpdate();
+    }
+
     debug(`command finished in ${Date.now() - startedAt}ms`);
+    process.exit(0); // Exiting to kill update check, if it's still running
 }
 
 async function updateCheck() {
-    debugUpdate('scheduling update check');
-    await Hoek.wait(50);
-
     debugUpdate('starting update check');
     updateNotifier({ pkg })
-        .then(() => debugUpdate('update check done'));
+        .then(notify => {
+            notifyUpdate = notify;
+            debugUpdate('update check done');
+        });
 
     debugUpdate('update check started');
 }
