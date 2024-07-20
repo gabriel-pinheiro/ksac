@@ -1,7 +1,6 @@
 import { injectable } from 'inversify';
 import 'colors';
 import { DefinitionServices } from '../definition/definition.service';
-import { CommandError } from './command.error';
 import { PlanService } from '../plan/plan.service';
 import { InquirerService } from '../inquirer/inquirer.service';
 import { AuthService } from '../auth/auth.service';
@@ -23,17 +22,9 @@ export class CommandService {
         console.log(`Start by creating a Service Credential on StackSpot and input the fields below`);
         console.log(`https://docs.stackspot.com/en/home/account/enterprise/service-credential`);
 
-        let realm: string;
-        let clientId: string;
-        let clientSecret: string;
-
-        try {
-            realm = await this.inquirerService.promptRealm();
-            clientId = await this.inquirerService.promptClientId();
-            clientSecret = await this.inquirerService.promptClientSecret();
-        } catch (e) {
-            throw new CommandError('Login cancelled');
-        }
+        const realm = await this.inquirerService.promptRealm();
+        const clientId = await this.inquirerService.promptClientId();
+        const clientSecret = await this.inquirerService.promptClientSecret();
 
         await this.authService.login(realm, clientId, clientSecret);
         console.log('Credentials saved'.green);

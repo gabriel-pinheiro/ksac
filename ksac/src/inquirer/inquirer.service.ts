@@ -1,44 +1,51 @@
 import { injectable } from "inversify";
-import inquirer from 'inquirer';
+import prompts from 'prompts';
+import { CommandError } from "../command/command.error";
 
 @injectable()
 export class InquirerService {
 
     async promptRealm(): Promise<string> {
-        const { realm } = await inquirer.prompt({
-            type: 'input',
+        const { realm } = await prompts.prompt({
+            type: 'text',
             name: 'realm',
-            // @ts-ignore
-            message: 'Realm:',
-            // @ts-ignore
+            message: 'Realm',
             validate: (input: string) => input.length > 0 ? true : 'Realm is required',
         });
+
+        if (!realm) {
+            throw new CommandError('Login cancelled');
+        }
 
         return realm;
     }
 
     async promptClientId(): Promise<string> {
-        const { clientId } = await inquirer.prompt({
-            type: 'input',
+        const { clientId } = await prompts.prompt({
+            type: 'text',
             name: 'clientId',
-            // @ts-ignore
-            message: 'Client ID:',
-            // @ts-ignore
+            message: 'Client ID',
             validate: (input: string) => input.length > 0 ? true : 'Client ID is required',
         });
+
+        if (!clientId) {
+            throw new CommandError('Login cancelled');
+        }
 
         return clientId;
     }
 
     async promptClientSecret(): Promise<string> {
-        const { clientSecret } = await inquirer.prompt({
-            type: 'input',
+        const { clientSecret } = await prompts.prompt({
+            type: 'text',
             name: 'clientSecret',
-            // @ts-ignore
-            message: 'Client Secret:',
-            // @ts-ignore
+            message: 'Client Secret',
             validate: (input: string) => input.length > 0 ? true : 'Client Secret is required',
         });
+
+        if (!clientSecret) {
+            throw new CommandError('Login cancelled');
+        }
 
         return clientSecret;
     }
