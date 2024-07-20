@@ -87,6 +87,8 @@ knowledge_source "cats" {
 }
 ```
 
+![Example of ksac validate](https://cdn.codetunnel.net/notnull/ksac-validate.png)
+
 ### 2. Validating your definitions
 
 Before applying your definitions, you can validate them to check for errors or warnings. This is an optional step, both `ksac plan` and `ksac apply` will also validate the definitions before running, but they required authentication while `ksac validate` does not.
@@ -97,11 +99,19 @@ To do this, run the `ksac validate` command:
 ksac validate
 ```
 
+![Example of ksac plan](https://cdn.codetunnel.net/notnull/ksac-plan.png)
+
 ### 3. Authenticating with StackSpot
 
 Before applying your definitions, you need to authenticate with StackSpot. If you're using a community account, you can use [Personal Access Tokens](https://app.stackspot.com/account/access-token). If you're using an enterprise account, you can use either [Personal Access Tokens](https://app.stackspot.com/account/access-token) or [Service Accounts](https://app.stackspot.com/account/service-credentials).
 
 After generating your credentials in the links above, you can authenticate with KSaC using the `ksac login` command and fill in the required information.
+
+```bash
+ksac login
+```
+
+![Example of ksac login](https://cdn.codetunnel.net/notnull/ksac-login.png)
 
 ### 4. Generating an execution plan
 
@@ -115,6 +125,8 @@ To do this, run the `ksac plan` command:
 ksac plan
 ```
 
+![Example of ksac plan](https://cdn.codetunnel.net/notnull/ksac-plan.png)
+
 ### 5. Applying the changes
 
 For your next Knowledge Sources you could skip from step 1 to step 5, as your authentication information will be saved and `ksac apply` also validates and plan the changes.
@@ -127,6 +139,8 @@ ksac apply
 
 After this, you can check your StackSpot panel to see the changes made. Running `ksac plan` or `ksac apply` again will show that there are no changes to be made, as your definitions and your StackSpot resources are in sync.
 
+![Example of ksac apply](https://cdn.codetunnel.net/notnull/ksac-apply.png)
+
 ### 6. Destroying the resources
 
 If you want to destroy all the resources you defined, you can run the `ksac destroy` command. KSaC will never delete a Knowledge Source with `ksac apply` so `ksac destroy` is the only way to remove Knowledge Sources via KSaC. Knowledge Objects will be deleted if they are not present in the definitions with `ksac apply`.
@@ -136,6 +150,8 @@ ksac destroy
 ```
 
 This is not as destructive as it seems, as you can always reapply the definitions with `ksac apply` to recreate the resources to the same state as your definitions.
+
+![Example of ksac destroy](https://cdn.codetunnel.net/notnull/ksac-destroy.png)
 
 ### 7. Troubleshooting
 
@@ -151,11 +167,25 @@ On Windows:
 npx cross-env "DEBUG=ksac:*" ksac apply
 ```
 
+<details>
+  <summary>Example output</summary>
+  <img src="https://cdn.codetunnel.net/notnull/ksac-debug.png" alt="Example of ksac debug">
+</details>
+
+---
+
 Also, you can generate the "desired state" with the `--show` flag in the `ksac validate` command. This will show the desired state of your definitions, which is the state that KSaC will try to make your StackSpot resources match.
+
+Spoiler:
 
 ```bash
 ksac validate --show
 ```
+
+<details>
+  <summary>Example output</summary>
+  <img src="https://cdn.codetunnel.net/notnull/ksac-show.png" alt="Example of ksac show">
+</details>
 
 ### 8. More HCL examples
 
