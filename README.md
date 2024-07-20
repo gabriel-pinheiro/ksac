@@ -87,8 +87,6 @@ knowledge_source "cats" {
 }
 ```
 
-![Example of ksac validate](https://cdn.codetunnel.net/notnull/ksac-validate.png)
-
 ### 2. Validating your definitions
 
 Before applying your definitions, you can validate them to check for errors or warnings. This is an optional step, both `ksac plan` and `ksac apply` will also validate the definitions before running, but they required authentication while `ksac validate` does not.
@@ -99,7 +97,7 @@ To do this, run the `ksac validate` command:
 ksac validate
 ```
 
-![Example of ksac plan](https://cdn.codetunnel.net/notnull/ksac-plan.png)
+![Example of ksac validate](https://cdn.codetunnel.net/notnull/ksac-validate.png)
 
 ### 3. Authenticating with StackSpot
 
