@@ -19,8 +19,8 @@ export class CommandService {
     ) { }
 
     async login() {
-        console.log(`Start by creating a Service Credential on StackSpot and input the fields below`);
-        console.log(`https://docs.stackspot.com/en/home/account/enterprise/service-credential`);
+        console.log(`Start by creating a Service Account or Access Token on StackSpot:`);
+        console.log(`https://app.stackspot.com/account/access-token`);
 
         const realm = await this.inquirerService.promptRealm();
         const clientId = await this.inquirerService.promptClientId();

@@ -37,10 +37,10 @@ export class InquirerService {
 
     async promptClientSecret(): Promise<string> {
         const { clientSecret } = await prompts.prompt({
-            type: 'text',
+            type: 'password',
             name: 'clientSecret',
-            message: 'Client Secret',
-            validate: (input: string) => input.length > 0 ? true : 'Client Secret is required',
+            message: 'Client Key',
+            validate: (input: string) => input.length > 0 ? true : 'Client Key is required',
         });
 
         if (!clientSecret) {
