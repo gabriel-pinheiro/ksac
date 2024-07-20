@@ -1,0 +1,12 @@
+{
+    "knowledgeSources": [
+        {
+            "slug": "ks-1",
+            "fileName": "file.hcl",
+            "description": "Knowledge Source 1",
+            "name": "Ks 1",
+            "knowledgeObjects": []
+        }
+    ],
+    "fileName": "file.hcl"
+}
