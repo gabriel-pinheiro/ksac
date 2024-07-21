@@ -7,6 +7,7 @@ import { AuthService } from '../auth/auth.service';
 import { Step } from '../plan/steps/step';
 import { ConciliationService } from '../conciliation/conciliation.service';
 import * as Hoek from '@hapi/hoek';
+import { PreferenceService } from '../preference/preference.service';
 
 @injectable()
 export class CommandService {
@@ -16,6 +17,7 @@ export class CommandService {
         private readonly inquirerService: InquirerService,
         private readonly authService: AuthService,
         private readonly conciliationService: ConciliationService,
+        private readonly preferenceService: PreferenceService,
     ) { }
 
     async login() {
@@ -35,7 +37,8 @@ export class CommandService {
         console.log('Credentials removed'.green);
     }
 
-    async validate(mustShow: boolean) {
+    async validate(options: any, mustShow: boolean) {
+        this.preferenceService.setOptions(options);
         const definitions = await this.definitionService.getDefinitions();
 
         if(mustShow) {
@@ -45,12 +48,14 @@ export class CommandService {
         console.log('The definitions are valid'.green);
     }
 
-    async plan() {
+    async plan(options: any) {
+        this.preferenceService.setOptions(options);
         const steps = await this.planService.getExecutionPlan();
         this.printPlan(steps);
     }
 
-    async apply(isDestroy?: boolean) {
+    async apply(options: any, isDestroy?: boolean) {
+        this.preferenceService.setOptions(options);
         const steps = await this.planService.getExecutionPlan(isDestroy);
         this.printPlan(steps);
 

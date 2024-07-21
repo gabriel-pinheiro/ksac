@@ -22,23 +22,27 @@ export class CommandController implements Controller {
         this.command
             .command('validate')
             .option('-s, --show', 'Show the definitions after validation')
+            .option('-p, --path <path>', 'Path to the definitions directory')
             .description('Checks the KSaC definitions for errors or warnings')
-            .action(({ show }) => this.errorProxy(() => this.service.validate(show)));
+            .action(({ show, ...options }) => this.errorProxy(() => this.service.validate(options, show)));
 
         this.command
             .command('plan')
+            .option('-p, --path <path>', 'Path to the definitions directory')
             .description('Shows the changes that will be made by the KSaC definitions')
-            .action(() => this.errorProxy(() => this.service.plan()));
+            .action(({ ...options }) => this.errorProxy(() => this.service.plan(options)));
 
         this.command
             .command('apply')
+            .option('-p, --path <path>', 'Path to the definitions directory')
             .description('Apply changes to the StackSpot resources so they match the KSaC definitions')
-            .action(() => this.errorProxy(() => this.service.apply()));
+            .action(({ ...options }) => this.errorProxy(() => this.service.apply(options)));
 
         this.command
             .command('destroy')
+            .option('-p, --path <path>', 'Path to the definitions directory')
             .description('Destroys the resources defined in the KSaC definitions')
-            .action(() => this.errorProxy(() => this.service.apply(true)));
+            .action(({ ...options }) => this.errorProxy(() => this.service.apply(options, true)));
 
         this.command
             .command('logout')

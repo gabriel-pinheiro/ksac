@@ -4,6 +4,7 @@ import { join } from "path";
 import { parse } from 'hcl-parser';
 import * as Hoek from '@hapi/hoek';
 import { CommandError } from "../command/command.error";
+import { PreferenceService } from "../preference/preference.service";
 
 const debug = require('debug')('ksac:definition-file:service');
 const { readdir, lstat, readFile } = promises;
@@ -22,6 +23,9 @@ const HCL_EXTENSION = ".hcl";
 
 @injectable()
 export class DefinitionFileService {
+    constructor(
+        private readonly preferenceService: PreferenceService,
+    ) { }
 
     async parseFiles(fileNames: string[]): Promise<DefinitionFile[]> {
         const files: DefinitionFile[] = [];
@@ -45,7 +49,12 @@ export class DefinitionFileService {
         return files;
     }
 
-    async getDefinitionFiles(path = '.'): Promise<string[]> {
+    async getDefinitionFiles(): Promise<string[]> {
+        const path = this.preferenceService.definitionsPath;
+        return await this.getDefinitionFilesByPath(path);
+    }
+
+    async getDefinitionFilesByPath(path: string): Promise<string[]> {
         debug(`loading definitions from '${path}'`);
         const fileNames = await readdir(path)
             .catch(Hoek.ignore);
@@ -95,7 +104,7 @@ export class DefinitionFileService {
     private async getSubDirectoryContents(path: string, subDirs: FileOrDir[]): Promise<string[]> {
         const subDirContents: string[] = [];
         for (const d of subDirs) {
-            const dirContents = await this.getDefinitionFiles(join(path, d.name));
+            const dirContents = await this.getDefinitionFilesByPath(join(path, d.name));
             subDirContents.push(...dirContents);
         }
         return subDirContents;

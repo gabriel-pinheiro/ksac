@@ -1,6 +1,8 @@
 /node_modules
 /dist
 
+/lab
+
 /.idea
 .project
 .classpath

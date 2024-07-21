@@ -3,6 +3,7 @@ import { DefinitionFileService } from './definition-file.service';
 import { promises } from 'fs';
 import { parse } from 'hcl-parser';
 import { CommandError } from '../command/command.error';
+import { PreferenceService } from '../preference/preference.service';
 
 jest.mock('fs', () => ({
     promises: {
@@ -24,9 +25,11 @@ const { readdir, lstat, readFile } = promises;
 
 describe('DefinitionFileService', () => {
     let service: DefinitionFileService;
+    let preferenceService: PreferenceService;
 
     beforeEach(() => {
-        service = new DefinitionFileService();
+        preferenceService = new PreferenceService();
+        service = new DefinitionFileService(preferenceService);
     });
 
     afterEach(() => {
@@ -72,7 +75,6 @@ describe('DefinitionFileService', () => {
 
     describe('getDefinitionFiles', () => {
         it('should get definition files correctly', async () => {
-            const path = '.';
             const rootFileNames = ['file1.hcl', 'file2.hcl', 'dir'];
             const dirFileNames = ['file3.hcl', 'sub_dir'];
             const subDirFileNames = ['file4.hcl'];
@@ -87,7 +89,7 @@ describe('DefinitionFileService', () => {
                 return { isDirectory: () => isDir } as any;
             });
 
-            const result = await service.getDefinitionFiles(path);
+            const result = await service.getDefinitionFiles();
 
             expect(result).toEqual([
                 'file1.hcl',
@@ -98,31 +100,28 @@ describe('DefinitionFileService', () => {
         });
 
         it('should ignore other extensions', async () => {
-            const path = '.';
             const fileNames = ['file1.hcl', 'file2.txt'];
 
             (readdir as jest.Mock).mockResolvedValue(fileNames);
             (lstat as jest.Mock).mockResolvedValue({ isDirectory: () => false });
 
-            const result = await service.getDefinitionFiles(path);
+            const result = await service.getDefinitionFiles();
 
             expect(result).toEqual(['file1.hcl']);
         });
 
         it('should ignore hidden files', async () => {
-            const path = '.';
             const fileNames = ['file1.hcl', '.file2.hcl'];
 
             (readdir as jest.Mock).mockResolvedValue(fileNames);
             (lstat as jest.Mock).mockResolvedValue({ isDirectory: () => false });
 
-            const result = await service.getDefinitionFiles(path);
+            const result = await service.getDefinitionFiles();
 
             expect(result).toEqual(['file1.hcl']);
         });
 
         it('should ignore hidden directories', async () => {
-            const path = '.';
             const rootFileNames = ['file1.hcl', '.dir'];
             const dirFileNames = ['file2.hcl'];
 
@@ -135,13 +134,12 @@ describe('DefinitionFileService', () => {
                 return { isDirectory: () => isDir } as any;
             });
 
-            const result = await service.getDefinitionFiles(path);
+            const result = await service.getDefinitionFiles();
 
             expect(result).toEqual(['file1.hcl']);
         });
 
         it('should ignore node_modules', async () => {
-            const path = '.';
             const rootFileNames = ['file1.hcl', 'node_modules'];
             const dirFileNames = ['file2.hcl'];
 
@@ -154,17 +152,15 @@ describe('DefinitionFileService', () => {
                 return { isDirectory: () => isDir } as any;
             });
 
-            const result = await service.getDefinitionFiles(path);
+            const result = await service.getDefinitionFiles();
 
             expect(result).toEqual(['file1.hcl']);
         });
 
         it('should throw CommandError if readdir fails', async () => {
-            const path = '.';
-
             (readdir as jest.Mock).mockRejectedValue(new Error('Read error'));
 
-            await expect(service.getDefinitionFiles(path)).rejects.toThrow(CommandError);
+            await expect(service.getDefinitionFiles()).rejects.toThrow(CommandError);
         });
     });
 });
