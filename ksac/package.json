@@ -10,6 +10,7 @@
     "prebuild": "rimraf dist",
     "build": "tsc",
     "test": "jest",
+    "test:e2e": "jest ./src/e2e",
     "prepare": "npm run build"
   },
   "repository": {
