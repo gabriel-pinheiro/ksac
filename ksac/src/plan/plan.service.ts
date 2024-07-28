@@ -1,6 +1,5 @@
 import { injectable } from "inversify";
-import { DefinitionServices, MergedDefinition } from "../definition/definition.service";
-import { KnowledgeObject, KnowledgeSource } from "../definition/definition-validator.service";
+import { DefinitionServices } from "../definition/definition.service";
 import { CreateKSStep } from "./steps/create-ks-step";
 import { FIELDS, PartialKnowledgeSource, UpdateKSStep } from "./steps/update-ks-step";
 import { KeepKSStep } from "./steps/keep-ks-step";
@@ -11,6 +10,7 @@ import { AuthService } from "../auth/auth.service";
 import { CommandError } from "../command/command.error";
 import { KnowledgeObject as ApiKnowledgeObject } from "stkai-sdk";
 import { DeleteKSStep } from "./steps/delete-ks-step";
+import { Definition, KnowledgeObject, KnowledgeSource } from "../definition/data/models";
 
 const debug = require('debug')('ksac:plan:service');
 
@@ -111,7 +111,7 @@ export class PlanService {
     private compareKOs(current: ApiKnowledgeObject, desired: KnowledgeObject): boolean {
         return current.page_content === desired.content
             && current.metadata.language === desired.language
-            && current.metadata.hint === desired.useCases.join('\n');
+            && current.metadata.hint === desired.useCases;
     }
 
     private async fetchKnowledgeSource(slug: string): Promise<PartialKnowledgeSource> {
@@ -161,7 +161,7 @@ export class PlanService {
         return FIELDS.some(field => current[field] !== desired[field]);
     }
 
-    private getDestroyPlan(definitions: MergedDefinition): Step[] {
+    private getDestroyPlan(definitions: Definition): Step[] {
         return definitions
             .knowledgeSources
             .map(ks => DeleteKSStep.of(ks));

@@ -1,8 +1,8 @@
 import { injectable } from "inversify";
 import { Step } from "../plan/steps/step";
-import { KnowledgeObject, KnowledgeSource } from "../definition/definition-validator.service";
 import { AuthService } from "../auth/auth.service";
 import { CommandError } from "../command/command.error";
+import { KnowledgeObject, KnowledgeSource } from "../definition/data/models";
 
 const debug = require('debug')('ksac:conciliation:service');
 
@@ -42,7 +42,7 @@ export class ConciliationService {
             ksSlug,
             ko.content,
             ko.language,
-            ko.useCases.join('\n'),
+            ko.useCases,
         );
     }
 

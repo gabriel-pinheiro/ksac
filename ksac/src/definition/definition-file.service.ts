@@ -5,19 +5,10 @@ import { parse } from 'hcl-parser';
 import * as Hoek from '@hapi/hoek';
 import { CommandError } from "../command/command.error";
 import { PreferenceService } from "../preference/preference.service";
+import { DefinitionFile, FileOrDir } from "./data/models";
 
 const debug = require('debug')('ksac:definition-file:service');
 const { readdir, lstat, readFile } = promises;
-
-export type FileOrDir = {
-    name: string,
-    isDir: boolean,
-};
-
-export type DefinitionFile = {
-    name: string,
-    content: any,
-};
 
 const HCL_EXTENSION = ".hcl";
 
@@ -27,34 +18,44 @@ export class DefinitionFileService {
         private readonly preferenceService: PreferenceService,
     ) { }
 
-    async parseFiles(fileNames: string[]): Promise<DefinitionFile[]> {
-        const files: DefinitionFile[] = [];
-
-        for (const name of fileNames) {
-            debug(`parsing file '${name}'`);
-            const content = await readFile(name)
-                .catch(Hoek.ignore);
-            if (!content) {
-                throw new CommandError(`Failed to read file '${name}'`);
-            }
-
-            const [data, error] = parse(content.toString());
-            if(error) {
-                throw new CommandError(`Failed to parse file '${name}:${error.Pos.Line}:${error.Pos.Column}'`);
-            }
-
-            files.push({ name, content: data });
+    async scanFiles(): Promise<string[]> {
+        const path = this.preferenceService.definitionsPath;
+        const files = await this.getDefinitionFiles(path);
+        if (!files.length) {
+            throw new CommandError('No definition files found. Make sure to create your definitions with the .hcl extension');
         }
 
         return files;
     }
 
-    async getDefinitionFiles(): Promise<string[]> {
-        const path = this.preferenceService.definitionsPath;
-        return await this.getDefinitionFilesByPath(path);
+    async parseFiles(fileNames: string[]): Promise<DefinitionFile[]> {
+        const parsedFiles: DefinitionFile[] = [];
+
+        for (const name of fileNames) {
+            const parsed = await this.parseFile(name);
+            parsedFiles.push(parsed);
+        }
+
+        return parsedFiles;
     }
 
-    async getDefinitionFilesByPath(path: string): Promise<string[]> {
+    private async parseFile(fileName: string): Promise<DefinitionFile> {
+        debug(`parsing file '${fileName}'`);
+        const content = await readFile(fileName)
+            .catch(Hoek.ignore);
+        if (!content) {
+            throw new CommandError(`Failed to read file '${fileName}'`);
+        }
+
+        const [data, error] = parse(content.toString());
+        if(error) {
+            throw new CommandError(`Failed to parse file '${fileName}:${error.Pos.Line}:${error.Pos.Column}'`);
+        }
+
+        return { name: fileName, content: data };
+    }
+
+    private async getDefinitionFiles(path: string): Promise<string[]> {
         debug(`loading definitions from '${path}'`);
         const fileNames = await readdir(path)
             .catch(Hoek.ignore);
@@ -104,7 +105,7 @@ export class DefinitionFileService {
     private async getSubDirectoryContents(path: string, subDirs: FileOrDir[]): Promise<string[]> {
         const subDirContents: string[] = [];
         for (const d of subDirs) {
-            const dirContents = await this.getDefinitionFilesByPath(join(path, d.name));
+            const dirContents = await this.getDefinitionFiles(join(path, d.name));
             subDirContents.push(...dirContents);
         }
         return subDirContents;

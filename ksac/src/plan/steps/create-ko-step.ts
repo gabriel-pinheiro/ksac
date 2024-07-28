@@ -1,5 +1,5 @@
+import { KnowledgeObject } from "../../definition/data/models";
 import { ConciliationService } from "../../conciliation/conciliation.service";
-import { KnowledgeObject } from "../../definition/definition-validator.service";
 import { Step } from "./step";
 
 const ARROW = ' >'.blue.bold;

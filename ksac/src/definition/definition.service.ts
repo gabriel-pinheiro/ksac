@@ -1,108 +1,52 @@
 import { injectable } from "inversify";
 import { DefinitionFileService } from "./definition-file.service";
-import { Definition, DefinitionValidationService, KnowledgeSource } from "./definition-validator.service";
-import { CommandError } from "../command/command.error";
+import { DefinitionValidationService } from "./definition-validator.service";
+import { DefinitionFileValidatorService } from "./definition-file-validator.service";
+import { Definition } from "./data/models";
+import { DefinitionMapperService } from "./definition-mapper.service";
+import { DefinitionEnricherService } from "./definition-enricher.service";
 
 const debug = require('debug')('ksac:definition:service');
-
-export type MergedDefinition = Omit<Definition, 'fileName'>;
-
-const SLUG_REGEX = /^[a-z0-9\-]+$/;
 
 @injectable()
 export class DefinitionServices {
     constructor(
         private readonly fileService: DefinitionFileService,
+        private readonly fileValidatorService: DefinitionFileValidatorService,
+        private readonly mapperService: DefinitionMapperService,
         private readonly validationService: DefinitionValidationService,
+        private readonly enricherService: DefinitionEnricherService,
     ) { }
 
-    async getDefinitions(): Promise<MergedDefinition> {
-        debug('loading definition files');
-        const files = await this.fileService.getDefinitionFiles();
-        if (!files.length) {
-            throw new CommandError('No definition files found. Make sure to create your definitions with the .hcl extension');
-        }
+    async getDefinitions(): Promise<Definition> {
+        debug('scanning files');
+        const files = await this.fileService.scanFiles();
+
         debug(`${files.length} definition files found, parsing`);
         const parsedFiles = await this.fileService.parseFiles(files);
-        debug('definitions parsed, mapping content');
-        const definitions = parsedFiles.map(f =>
-            this.validationService.mapFileToDefinition(f));
-        debug('content mapped, validating format');
-        definitions.forEach(d =>
+
+        debug('files parsed, validating file format');
+        parsedFiles.forEach(f =>
+            this.fileValidatorService.validateFileFormat(f));
+
+        debug('files validated, mapping definitions');
+        const rawDefinitions = parsedFiles.map(f =>
+            this.mapperService.mapFileToRawDefinition(f));
+
+        debug('definitions mapped, validating definitions');
+        rawDefinitions.forEach(d =>
             this.validationService.validateDefinition(d));
-        debug('formats validated, merging files');
-        const merged = this.mergeDefinitions(definitions);
-        debug('files merged, validating content');
-        this.validateContent(merged);
+
+        debug('definitions validated, enriching definitions');
+        const definitions = await this.enricherService.enrichDefinitions(rawDefinitions);
+
+        debug('definitions enriched, merging definitions');
+        const merged = this.mapperService.mergeDefinitions(definitions);
+
+        debug('definitions merged, validating content');
+        this.validationService.validateContent(merged);
+
         debug('content validated, done loading definitions');
         return merged;
-    }
-
-    private mergeDefinitions(definitions: Definition[]): MergedDefinition {
-        return definitions.reduce((acc, value) => ({
-            knowledgeSources: [...acc.knowledgeSources, ...value.knowledgeSources],
-        }), { knowledgeSources: [] });
-    }
-
-    private validateContent(merged: MergedDefinition) {
-        this.validateDuplicatedKS(merged);
-        merged.knowledgeSources.forEach(ks => {
-            this.validateDuplicatedKO(ks);
-            this.validateSlugs(ks);
-        });
-    }
-
-    private validateDuplicatedKS(merged: MergedDefinition) {
-        const slugs = new Set<string>();
-        merged.knowledgeSources.forEach(ks => {
-            if (slugs.has(ks.slug)) {
-                throw new CommandError(`Duplicated knowledge source slug '${ks.slug}' found on ${ks.fileName}`);
-            }
-
-            slugs.add(ks.slug);
-        });
-    }
-
-    private validateDuplicatedKO(ks: KnowledgeSource) {
-        const slugs = new Set<string>();
-        ks.knowledgeObjects.forEach(ko => {
-            if (slugs.has(ko.slug)) {
-                throw new CommandError(`Duplicated knowledge object slug '${ko.slug}' in source '${ks.slug}' found on ${ks.fileName}`);
-            }
-
-            slugs.add(ko.slug);
-        });
-    }
-
-    private validateSlugs(ks: KnowledgeSource) {
-        const invalidSlugs = ks.knowledgeObjects
-            .map(ko => ko.slug)
-            .map(slug => this.validateSlug(slug, ks))
-            .filter(error => Boolean(error));
-
-        if (invalidSlugs.length) {
-            throw new CommandError(`Invalid knowledge object slug(s) found in knowledge source '${ks.slug}' on file '${ks.fileName}:'\n${invalidSlugs.join('\n')}`);
-        }
-
-        const ksSlugError = this.validateSlug(ks.slug, ks);
-        if (ksSlugError) {
-            throw new CommandError(`Invalid knowledge source slug '${ks.slug}' found on file '${ks.fileName}':\n${ksSlugError}`);
-        }
-    }
-
-    private validateSlug(slug: string, ks: KnowledgeSource): string {
-        if (slug.length < 2) {
-            return `'${slug}' is too short`;
-        }
-
-        if (slug.length > 36) {
-            return `'${slug}' is too long`;
-        }
-
-        if (!SLUG_REGEX.test(slug)) {
-            return `'${slug}' is an invalid slug`;
-        }
-
-        return '';
     }
 }
