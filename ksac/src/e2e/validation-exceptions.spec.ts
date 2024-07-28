@@ -118,4 +118,13 @@ describe('Exceptions Scenarios', () => {
         await expect(definitionPromise).rejects
             .toThrow('"knowledgeSources[0].knowledgeObjects[0].content" is required');
     });
+
+    it('should not accept KO with empty content', async () => {
+        preferenceService.setOptions({
+            path: 'test/e2e/exceptions/scenario-12',
+        });
+        const definitionPromise = service.getDefinitions();
+        await expect(definitionPromise).rejects
+            .toThrow('"knowledgeSources[0].knowledgeObjects[0].content" is not allowed to be empty');
+    });
 });

@@ -139,4 +139,21 @@ describe('Success Scenarios', () => {
             }],
         });
     });
+
+
+
+    it('should accept empty files', async () => {
+        preferenceService.setOptions({
+            path: 'test/e2e/success/scenario-07',
+        });
+        const definition = await service.getDefinitions();
+
+        expect(definition).toMatchObject({
+            knowledgeSources: [{
+                slug: 'basic',
+                name: 'Name',
+                description: 'Description',
+            }],
+        });
+    });
 });

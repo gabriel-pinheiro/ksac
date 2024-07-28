@@ -1,13 +1,21 @@
+import 'colors';
 import { injectable } from "inversify";
 import { Definition, DefinitionFile, RawDefinition, RawKnowledgeObject, RawKnowledgeSource } from "./data/models";
 
 const debug = require('debug')('ksac:definition-mapper:service');
+
+const WARN = 'Warning!'.yellow.bold;
 
 @injectable()
 export class DefinitionMapperService {
 
     mapFileToRawDefinition(file: DefinitionFile): RawDefinition {
         debug(`mapping file '${file.name}' content to raw definition`);
+
+        if(!file.content.knowledge_source) {
+            console.error(`${WARN} File '${file.name}' does not contain any knowledge source`);
+            return { knowledgeSources: [], fileName: file.name };
+        }
 
         const knowledgeSources = file.content.knowledge_source
             .map(ks => this.mapKnowledgeSource(ks, file.name));
