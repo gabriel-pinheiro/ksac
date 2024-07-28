@@ -41,7 +41,7 @@
     "colors": "^1.4.0",
     "commander": "^12.1.0",
     "debug": "^4.3.5",
-    "gp-simple-update-notifier": "^2.0.0",
+    "gp-simple-update-notifier": "^2.1.0",
     "hcl-parser": "^0.1.1",
     "inversify": "^6.0.2",
     "joi": "^17.13.3",

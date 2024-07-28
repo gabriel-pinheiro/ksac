@@ -45,6 +45,7 @@ async function bootstrap() {
     if (notifyUpdate) {
         debug('showing update message');
         notifyUpdate();
+        console.log(`Run '${`npm install -g ${pkg.name}`.green.bold}' to update`);
     }
 
     debug(`command finished in ${Date.now() - startedAt}ms`);
