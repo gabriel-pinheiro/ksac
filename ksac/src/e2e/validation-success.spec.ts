@@ -49,7 +49,7 @@ describe('Success Scenarios', () => {
                 knowledgeObjects: [{
                     content: 'sun',
                     slug: 'george',
-                    useCases: [],
+                    useCases: '',
                     language: 'markdown',
                 }],
             }],
@@ -70,7 +70,7 @@ describe('Success Scenarios', () => {
                 knowledgeObjects: [{
                     slug: 'ko-test',
                     content: 'Content text',
-                    useCases: ["Opus 1"],
+                    useCases: 'Opus 1',
                     language: 'markdown',
                 }],
             }],
@@ -91,7 +91,7 @@ describe('Success Scenarios', () => {
                 knowledgeObjects: [{
                     slug: 'ko-test',
                     content: 'Content text',
-                    useCases: ["Opus 1", "Opus 2"],
+                    useCases: 'Opus 1\nOpus 2',
                     language: 'markdown',
                 }],
             }],
@@ -112,7 +112,7 @@ describe('Success Scenarios', () => {
                 knowledgeObjects: [{
                     slug: 'ko-test',
                     content: 'Content text',
-                    useCases: [],
+                    useCases: '',
                     language: 'markdown',
                 }],
             }],
@@ -133,7 +133,7 @@ describe('Success Scenarios', () => {
                 knowledgeObjects: [{
                     slug: 'ko-test',
                     content: 'Content text',
-                    useCases: ["Empty"],
+                    useCases: 'Empty',
                     language: 'golang',
                 }],
             }],
