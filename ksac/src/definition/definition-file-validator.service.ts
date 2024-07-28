@@ -132,7 +132,7 @@ export class DefinitionFileValidatorService {
             return;
         }
 
-        throw new CommandError(`Knowledge Source '${ksSlug}' in file '${fileName}' an invalid Knowledge Object. Make sure it has a slug`);
+        throw new CommandError(`Knowledge Source '${ksSlug}' in file '${fileName}' contains an invalid Knowledge Object. Make sure it has a slug`);
     }
 
     /**
