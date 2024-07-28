@@ -1,6 +1,6 @@
 {
   "name": "ksac",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Knowledge Source as Code for StackSpot AI",
   "main": "dist/index.js",
   "bin": {
