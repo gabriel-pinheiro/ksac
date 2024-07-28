@@ -195,23 +195,6 @@ describe('ksac validate - step 3: Map Files', () => {
             expect(rawDefinition.knowledgeSources[0].knowledgeObjects[0]).not.toHaveProperty('use_cases');
         });
 
-        it('should trim content', async () => {
-            const hcl = `
-                knowledge_source "ks-slug" {
-                    name = "Name"
-                    description = "Description"
-
-                    knowledge_object "ko-slug" {
-                        content = " content "
-                    }
-                }
-            `;
-            const file = fileFactory(hcl);
-            const rawDefinition = service.mapFileToRawDefinition(file);
-
-            expect(rawDefinition.knowledgeSources[0].knowledgeObjects[0].content).toBe('content');
-        });
-
         it('should not break without content', async () => {
             const hcl = `
                 knowledge_source "ks-slug" {

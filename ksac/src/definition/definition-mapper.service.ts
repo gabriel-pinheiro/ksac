@@ -60,9 +60,11 @@ export class DefinitionMapperService {
             slug, ...object,
         };
         delete knowledgeObject.use_cases;
+        delete knowledgeObject.import_file;
         knowledgeObject.useCases = object.use_cases || [];
+        knowledgeObject.importFile = object.import_file;
         knowledgeObject.language = knowledgeObject.language || 'markdown';
-        knowledgeObject.content = knowledgeObject.content?.trim?.();
+        knowledgeObject.content = knowledgeObject.content;
 
         return knowledgeObject;
     }

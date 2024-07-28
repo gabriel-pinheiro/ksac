@@ -116,7 +116,7 @@ describe('Exceptions Scenarios', () => {
         });
         const definitionPromise = service.getDefinitions();
         await expect(definitionPromise).rejects
-            .toThrow('"knowledgeSources[0].knowledgeObjects[0].content" is required');
+            .toThrow('"knowledgeSources[0].knowledgeObjects[0]" must contain at least one of [content, importFile]');
     });
 
     it('should not accept KO with empty content', async () => {
@@ -126,5 +126,41 @@ describe('Exceptions Scenarios', () => {
         const definitionPromise = service.getDefinitions();
         await expect(definitionPromise).rejects
             .toThrow('"knowledgeSources[0].knowledgeObjects[0].content" is not allowed to be empty');
+    });
+
+    it('should not accept KO with both content and import_file', async () => {
+        preferenceService.setOptions({
+            path: 'test/e2e/exceptions/scenario-13',
+        });
+        const definitionPromise = service.getDefinitions();
+        await expect(definitionPromise).rejects
+            .toThrow('"knowledgeSources[0].knowledgeObjects[0]" contains a conflict between exclusive peers [content, importFile]');
+    });
+
+    it('should not accept import_files for a path that doesnt exist', async () => {
+        preferenceService.setOptions({
+            path: 'test/e2e/exceptions/scenario-14',
+        });
+        const definitionPromise = service.getDefinitions();
+        await expect(definitionPromise).rejects
+            .toThrow("no such file or directory, open 'test/e2e/exceptions/scenario-14/file.txt'");
+    });
+
+    it('should not accept whitespace content', async () => {
+        preferenceService.setOptions({
+            path: 'test/e2e/exceptions/scenario-15',
+        });
+        const definitionPromise = service.getDefinitions();
+        await expect(definitionPromise).rejects
+            .toThrow("has no content");
+    });
+
+    it('should not accept whitespace content from imported file', async () => {
+        preferenceService.setOptions({
+            path: 'test/e2e/exceptions/scenario-16',
+        });
+        const definitionPromise = service.getDefinitions();
+        await expect(definitionPromise).rejects
+            .toThrow("has no content");
     });
 });

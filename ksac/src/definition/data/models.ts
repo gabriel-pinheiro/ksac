@@ -12,7 +12,8 @@ export type RawKnowledgeObject = {
     slug: string,
     useCases: string[],
     language: string,
-    content: string,
+    content?: string,
+    importFile?: string,
 };
 
 export type RawKnowledgeSource = {

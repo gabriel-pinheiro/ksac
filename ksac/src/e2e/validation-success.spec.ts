@@ -140,8 +140,6 @@ describe('Success Scenarios', () => {
         });
     });
 
-
-
     it('should accept empty files', async () => {
         preferenceService.setOptions({
             path: 'test/e2e/success/scenario-07',
@@ -153,6 +151,95 @@ describe('Success Scenarios', () => {
                 slug: 'basic',
                 name: 'Name',
                 description: 'Description',
+            }],
+        });
+    });
+
+    it('should import content from file with ./', async () => {
+        preferenceService.setOptions({
+            path: 'test/e2e/success/scenario-08',
+        });
+        const definition = await service.getDefinitions();
+
+        expect(definition).toMatchObject({
+            knowledgeSources: [{
+                slug: 'dogs',
+                name: 'Dog',
+                description: 'A knowledge source about dogs',
+                knowledgeObjects: [{
+                    slug: 'ko-test',
+                    content: 'External content text',
+                    useCases: 'Empty',
+                    language: 'golang',
+                }],
+            }],
+        });
+    });
+
+    it('should import content from file without ./', async () => {
+        preferenceService.setOptions({
+            path: 'test/e2e/success/scenario-09',
+        });
+        const definition = await service.getDefinitions();
+
+        expect(definition).toMatchObject({
+            knowledgeSources: [{
+                slug: 'dogs',
+                name: 'Dog',
+                description: 'A knowledge source about dogs',
+                knowledgeObjects: [{
+                    slug: 'ko-test',
+                    content: 'External content text',
+                    useCases: 'Empty',
+                    language: 'golang',
+                }],
+            }],
+        });
+    });
+
+    it('should import content from file relative to HCL path', async () => {
+        preferenceService.setOptions({
+            path: 'test/e2e/success/scenario-10',
+        });
+        const definition = await service.getDefinitions();
+
+        expect(definition).toMatchObject({
+            knowledgeSources: [{
+                slug: 'dogs',
+                name: 'Dog',
+                description: 'A knowledge source about dogs',
+                knowledgeObjects: [{
+                    slug: 'ko-test',
+                    content: 'External content text',
+                    useCases: 'Empty',
+                    language: 'golang',
+                }],
+            }],
+        });
+    });
+
+    it('should trim content', async () => {
+        preferenceService.setOptions({
+            path: 'test/e2e/success/scenario-11',
+        });
+        const definition = await service.getDefinitions();
+
+        expect(definition).toMatchObject({
+            knowledgeSources: [{
+                slug: 'dogs',
+                name: 'Dog',
+                description: 'A knowledge source about dogs',
+                knowledgeObjects: [{
+                    slug: 'ko-test-1',
+                    content: 'Content text',
+                    useCases: 'Empty',
+                    language: 'golang',
+                }, {
+                    slug: 'ko-test-2',
+                    content: 'External content text',
+                    useCases: 'Empty',
+                    language: 'golang',
+                }],
             }],
         });
     });

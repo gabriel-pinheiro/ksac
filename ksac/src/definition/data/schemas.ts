@@ -4,8 +4,9 @@ export const rawKnowledgeObjectSchema = Joi.object({
     slug: Joi.string().required(),
     useCases: Joi.array().items(Joi.string()).required(),
     language: Joi.string().required(),
-    content: Joi.string().required(),
-});
+    content: Joi.string(),
+    importFile: Joi.string(),
+}).xor('content', 'importFile');
 
 export const rawKnowledgeSourceSchema = Joi.object({
     slug: Joi.string().required(),

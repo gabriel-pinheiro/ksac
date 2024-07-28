@@ -25,6 +25,7 @@ export class DefinitionValidationService {
         definition.knowledgeSources.forEach(ks => {
             this.validateDuplicatedKO(ks);
             this.validateSlugs(ks);
+            this.validateEmptyContent(ks);
         });
     }
 
@@ -80,5 +81,13 @@ export class DefinitionValidationService {
         }
 
         return '';
+    }
+
+    private validateEmptyContent(ks: KnowledgeSource) {
+        ks.knowledgeObjects.forEach(ko => {
+            if (!ko.content) {
+                throw new CommandError(`Knowledge object '${ko.slug}' in source '${ks.slug}' on file '${ks.fileName}' has no content`);
+            }
+        });
     }
 }

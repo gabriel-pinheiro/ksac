@@ -229,5 +229,23 @@ describe('ksac validate - step 7: Validate Content', () => {
             expect(() => service.validateContent(definition)).toThrow(CommandError);
         });
 
+        it('should reject empty content', async () => {
+            const hcl = `
+                knowledge_source "ks-slug" {
+                    name = "Name 1"
+                    description = "Description 1"
+
+                    knowledge_object "ko" {
+                        content = "   "
+                    }
+                }
+            `;
+            const file = fileFactory(hcl);
+            const rawDefinition = mapper.mapFileToRawDefinition(file);
+            const [definition] = await enricher.enrichDefinitions([rawDefinition]);
+
+            expect(() => service.validateContent(definition)).toThrow(CommandError);
+        });
+
     });
 });

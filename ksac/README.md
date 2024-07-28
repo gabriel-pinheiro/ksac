@@ -221,6 +221,12 @@ EOF
             "Molly's toys and activities"
         ]
     }
+
+    knowledge_object "fluffy" {
+        // Instead of defining the content directly, you can
+        // import it from an external file
+        import_file = "./fluffy.md"
+    }
 }
 ```
 
