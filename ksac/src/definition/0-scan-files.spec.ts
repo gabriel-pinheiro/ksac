@@ -116,5 +116,11 @@ describe('ksac validate - step 0: Scan Files', () => {
 
             await expect(service.scanFiles()).rejects.toThrow(CommandError);
         });
+
+        it('should throw CommandError if no files are found', async () => {
+            (readdir as jest.Mock).mockResolvedValue([]);
+
+            await expect(service.scanFiles()).rejects.toThrow(CommandError);
+        });
     });
 });

@@ -20,7 +20,24 @@ describe('ksac validate - step 2: Validate Files', () => {
     });
 
     describe('DefinitionFileValidatorService#validateFileFormat', () => {
+        it('should not accept non-object contents', async () => {
+            const file = {
+                name: 'file1.hcl',
+                content: 'test',
+            };
+            expect(() => service.validateFileFormat(file)).toThrow(CommandError);
+        });
+
         it('should not accept non-object KSs', async () => {
+            const hcl = `
+                knowledge_source = ["source"]
+            `;
+            const file = fileFactory(hcl);
+
+            expect(() => service.validateFileFormat(file)).toThrow(CommandError);
+        });
+
+        it('should not accept non-array KSs', async () => {
             const hcl = `
                 knowledge_source = "source"
             `;
