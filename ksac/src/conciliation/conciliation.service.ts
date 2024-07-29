@@ -1,16 +1,14 @@
-import { injectable } from "inversify";
-import { Step } from "../plan/steps/step";
-import { AuthService } from "../auth/auth.service";
-import { CommandError } from "../command/command.error";
-import { KnowledgeObject, KnowledgeSource } from "../definition/data/models";
+import { injectable } from 'inversify';
+import { Step } from '../plan/steps/step';
+import { AuthService } from '../auth/auth.service';
+import { CommandError } from '../command/command.error';
+import { KnowledgeObject, KnowledgeSource } from '../definition/data/models';
 
 const debug = require('debug')('ksac:conciliation:service');
 
 @injectable()
 export class ConciliationService {
-    constructor(
-        private readonly authService: AuthService,
-    ) { }
+    constructor(private readonly authService: AuthService) {}
 
     async applyPlan(steps: Step[]) {
         for (const step of steps) {
@@ -25,7 +23,7 @@ export class ConciliationService {
             ks.slug,
             ks.name,
             'SNIPPET',
-            ks.description
+            ks.description,
         );
     }
 
@@ -38,12 +36,7 @@ export class ConciliationService {
     async createKnowledgeObject(ksSlug: string, ko: KnowledgeObject) {
         const stk = await this.authService.getStackSpot();
         debug(`creating knowledge object '${ko.slug}'`);
-        await stk.createSnippet(
-            ksSlug,
-            ko.content,
-            ko.language,
-            ko.useCases,
-        );
+        await stk.createSnippet(ksSlug, ko.content, ko.language, ko.useCases);
     }
 
     async deleteKnowledgeObject(ksSlug: string, koSlug: string) {
@@ -66,7 +59,9 @@ export class ConciliationService {
             }
 
             if (data?.message && data?.code) {
-                throw new CommandError(`Failed to delete knowledge source '${slug}', ${data.message} (${data.code})`);
+                throw new CommandError(
+                    `Failed to delete knowledge source '${slug}', ${data.message} (${data.code})`,
+                );
             }
 
             throw e;

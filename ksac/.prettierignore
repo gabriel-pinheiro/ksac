@@ -1,0 +1,8 @@
+dist
+coverage
+lab
+test
+*.spec.ts
+package.json
+package-lock.json
+README.md

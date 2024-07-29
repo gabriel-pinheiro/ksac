@@ -1,4 +1,4 @@
-import { injectable } from "inversify";
+import { injectable } from 'inversify';
 import {
     Definition,
     RawDefinition,
@@ -6,10 +6,10 @@ import {
     RawKnowledgeSource,
     KnowledgeObject,
     KnowledgeSource,
-} from "./data/models";
+} from './data/models';
 import path from 'path';
 import { promises } from 'fs';
-import { CommandError } from "../command/command.error";
+import { CommandError } from '../command/command.error';
 
 const { readFile } = promises;
 
@@ -17,7 +17,9 @@ const debug = require('debug')('ksac:definition-enricher:service');
 
 @injectable()
 export class DefinitionEnricherService {
-    async enrichDefinitions(rawDefinitions: RawDefinition[]): Promise<Definition[]> {
+    async enrichDefinitions(
+        rawDefinitions: RawDefinition[],
+    ): Promise<Definition[]> {
         const definitions: Definition[] = [];
 
         for (const raw of rawDefinitions) {
@@ -39,7 +41,9 @@ export class DefinitionEnricherService {
         return { knowledgeSources };
     }
 
-    private async enrichKnowledgeSource(raw: RawKnowledgeSource): Promise<KnowledgeSource> {
+    private async enrichKnowledgeSource(
+        raw: RawKnowledgeSource,
+    ): Promise<KnowledgeSource> {
         debug(`enriching knowledge source '${raw.slug}'`);
         const knowledgeObjects: KnowledgeObject[] = [];
 
@@ -51,11 +55,19 @@ export class DefinitionEnricherService {
         return { ...raw, knowledgeObjects };
     }
 
-    private async enrichKnowledgeObject(raw: RawKnowledgeObject, ks: RawKnowledgeSource): Promise<KnowledgeObject> {
+    private async enrichKnowledgeObject(
+        raw: RawKnowledgeObject,
+        ks: RawKnowledgeSource,
+    ): Promise<KnowledgeObject> {
         debug(`enriching knowledge object '${raw.slug}'`);
         let content = raw.content;
         if (raw.importFile) {
-            content = await this.importContent(raw.importFile, ks.fileName, ks.slug, raw.slug);
+            content = await this.importContent(
+                raw.importFile,
+                ks.fileName,
+                ks.slug,
+                raw.slug,
+            );
         }
 
         content = content?.trim?.() ?? '';
@@ -68,7 +80,12 @@ export class DefinitionEnricherService {
         };
     }
 
-    private async importContent(file: string, originPath: string, ksSlug: string, koSlug: string): Promise<string> {
+    private async importContent(
+        file: string,
+        originPath: string,
+        ksSlug: string,
+        koSlug: string,
+    ): Promise<string> {
         const dir = path.dirname(originPath);
         const filePath = path.join(dir, file);
         try {
@@ -76,7 +93,9 @@ export class DefinitionEnricherService {
             const content = await readFile(filePath);
             return content.toString();
         } catch (error) {
-            throw new CommandError(`Error importing content from '${filePath}' for knowledge object '${koSlug}' in knowledge source '${ksSlug}':\n${error.message}`);
+            throw new CommandError(
+                `Error importing content from '${filePath}' for knowledge object '${koSlug}' in knowledge source '${ksSlug}':\n${error.message}`,
+            );
         }
     }
 }

@@ -1,7 +1,9 @@
 import * as semver from 'semver';
-if(!semver.satisfies(process.version, '>=16')) {
-  console.error(`Your NodeJS version (${process.version}) is too old for ksac\nUse at least NodeJS 16`);
-  process.exit(1);
+if (!semver.satisfies(process.version, '>=16')) {
+    console.error(
+        `Your NodeJS version (${process.version}) is too old for ksac\nUse at least NodeJS 16`,
+    );
+    process.exit(1);
 }
 
 const debug = require('debug')('ksac:main');
@@ -23,8 +25,9 @@ async function bootstrap() {
     updateCheck();
 
     debug('creating Commander');
-    const command = new Command()
-        .version(`ksac/${pkg.version} node/${process.version}`);
+    const command = new Command().version(
+        `ksac/${pkg.version} node/${process.version}`,
+    );
 
     debug('resolving dependencies');
     const container = new Container({
@@ -45,7 +48,9 @@ async function bootstrap() {
     if (notifyUpdate) {
         debug('showing update message');
         notifyUpdate();
-        console.log(`Run '${`npm install -g ${pkg.name}`.green.bold}' to update`);
+        console.log(
+            `Run '${`npm install -g ${pkg.name}`.green.bold}' to update`,
+        );
     }
 
     debug(`command finished in ${Date.now() - startedAt}ms`);
@@ -54,11 +59,10 @@ async function bootstrap() {
 
 async function updateCheck() {
     debugUpdate('starting update check');
-    updateNotifier({ pkg })
-        .then(notify => {
-            notifyUpdate = notify;
-            debugUpdate('update check done');
-        });
+    updateNotifier({ pkg }).then((notify) => {
+        notifyUpdate = notify;
+        debugUpdate('update check done');
+    });
 
     debugUpdate('update check started');
 }

@@ -1,13 +1,11 @@
-import { injectable } from "inversify";
-import { CommandError } from "../command/command.error";
-import { DefinitionFile } from "./data/models";
+import { injectable } from 'inversify';
+import { CommandError } from '../command/command.error';
+import { DefinitionFile } from './data/models';
 
 const debug = require('debug')('ksac:definition-file-validator:service');
 
-
 @injectable()
 export class DefinitionFileValidatorService {
-
     /**
      * Receives the DefinitionFiles containing the raw content
      * parsed by the HCL lib.
@@ -25,9 +23,9 @@ export class DefinitionFileValidatorService {
             return;
         }
 
-        file.content.knowledge_source.forEach(ks =>
-            this.validateFileOneKS(ks, file.name));
-
+        file.content.knowledge_source.forEach((ks) =>
+            this.validateFileOneKS(ks, file.name),
+        );
     }
 
     /**
@@ -47,10 +45,13 @@ export class DefinitionFileValidatorService {
      * the only stanza present in the root level.
      */
     private validateFileKSFormat(file: DefinitionFile) {
-        const wrongKeys = Object.keys(file.content)
-            .filter(key => key !== 'knowledge_source');
+        const wrongKeys = Object.keys(file.content).filter(
+            (key) => key !== 'knowledge_source',
+        );
         if (wrongKeys.length) {
-            throw new CommandError(`File '${file.name}' contains invalid keys: ${wrongKeys.join(', ')}`);
+            throw new CommandError(
+                `File '${file.name}' contains invalid keys: ${wrongKeys.join(', ')}`,
+            );
         }
 
         if (!file.content.hasOwnProperty('knowledge_source')) {
@@ -58,7 +59,9 @@ export class DefinitionFileValidatorService {
         }
 
         if (!Array.isArray(file.content.knowledge_source)) {
-            throw new CommandError(`'knowledge_source' in file '${file.name}' is not a named object, invalid format`);
+            throw new CommandError(
+                `'knowledge_source' in file '${file.name}' is not a named object, invalid format`,
+            );
         }
     }
 
@@ -77,11 +80,14 @@ export class DefinitionFileValidatorService {
         }
 
         if (!Array.isArray(source.knowledge_object)) {
-            throw new CommandError(`Knowledge Source '${slug}' in file '${fileName}' contains an invalid Knowledge Object`);
+            throw new CommandError(
+                `Knowledge Source '${slug}' in file '${fileName}' contains an invalid Knowledge Object`,
+            );
         }
 
-        source.knowledge_object.forEach(ko =>
-            this.validateFileKO(ko, slug, fileName));
+        source.knowledge_object.forEach((ko) =>
+            this.validateFileKO(ko, slug, fileName),
+        );
     }
 
     /**
@@ -93,24 +99,36 @@ export class DefinitionFileValidatorService {
             return;
         }
 
-        throw new CommandError(`File '${fileName}' contains an invalid Knowledge Source. Make sure it has a slug`);
+        throw new CommandError(
+            `File '${fileName}' contains an invalid Knowledge Source. Make sure it has a slug`,
+        );
     }
 
     /**
      * Validates the knowledge_source stanza format, and if it's
      * the only stanza present in the root level.
      */
-    private validateFileOneKSSources(sources: any[], slug: string, fileName: string) {
+    private validateFileOneKSSources(
+        sources: any[],
+        slug: string,
+        fileName: string,
+    ) {
         if (!Array.isArray(sources)) {
-            throw new CommandError(`Knowledge Source '${slug}' in file '${fileName}' is not a named object, invalid format`);
+            throw new CommandError(
+                `Knowledge Source '${slug}' in file '${fileName}' is not a named object, invalid format`,
+            );
         }
 
         if (sources.length === 0) {
-            throw new CommandError(`Knowledge Source '${slug}' in file '${fileName}' is empty`);
+            throw new CommandError(
+                `Knowledge Source '${slug}' in file '${fileName}' is empty`,
+            );
         }
 
         if (sources.length > 1) {
-            throw new CommandError(`Knowledge Source '${slug}' in file '${fileName}' is duplicated`);
+            throw new CommandError(
+                `Knowledge Source '${slug}' in file '${fileName}' is duplicated`,
+            );
         }
     }
     /**
@@ -127,28 +145,45 @@ export class DefinitionFileValidatorService {
      * HCL stanzas come in key-value maps, making sure each KO
      * has only one key.
      */
-    private validateFileKOSingleKey(obj: any, ksSlug: string, fileName: string) {
+    private validateFileKOSingleKey(
+        obj: any,
+        ksSlug: string,
+        fileName: string,
+    ) {
         if (Object.keys(obj).length === 1) {
             return;
         }
 
-        throw new CommandError(`Knowledge Source '${ksSlug}' in file '${fileName}' contains an invalid Knowledge Object. Make sure it has a slug`);
+        throw new CommandError(
+            `Knowledge Source '${ksSlug}' in file '${fileName}' contains an invalid Knowledge Object. Make sure it has a slug`,
+        );
     }
 
     /**
      * Validates the knowledge_object stanza format
      */
-    private validateFileKOObjects(objects: any[], slug: string, ksSlug: string, fileName: string) {
+    private validateFileKOObjects(
+        objects: any[],
+        slug: string,
+        ksSlug: string,
+        fileName: string,
+    ) {
         if (!Array.isArray(objects)) {
-            throw new CommandError(`Knowledge Object '${slug}' in Knowledge Source '${ksSlug}' in file '${fileName}' is not a named object, invalid format`);
+            throw new CommandError(
+                `Knowledge Object '${slug}' in Knowledge Source '${ksSlug}' in file '${fileName}' is not a named object, invalid format`,
+            );
         }
 
         if (objects.length === 0) {
-            throw new CommandError(`Knowledge Object '${slug}' in Knowledge Source '${ksSlug}' in file '${fileName}' is empty`);
+            throw new CommandError(
+                `Knowledge Object '${slug}' in Knowledge Source '${ksSlug}' in file '${fileName}' is empty`,
+            );
         }
 
         if (objects.length > 1) {
-            throw new CommandError(`Knowledge Object '${slug}' in Knowledge Source '${ksSlug}' in file '${fileName}' is duplicated`);
+            throw new CommandError(
+                `Knowledge Object '${slug}' in Knowledge Source '${ksSlug}' in file '${fileName}' is duplicated`,
+            );
         }
     }
 }

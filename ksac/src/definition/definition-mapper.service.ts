@@ -1,6 +1,12 @@
 import 'colors';
-import { injectable } from "inversify";
-import { Definition, DefinitionFile, RawDefinition, RawKnowledgeObject, RawKnowledgeSource } from "./data/models";
+import { injectable } from 'inversify';
+import {
+    Definition,
+    DefinitionFile,
+    RawDefinition,
+    RawKnowledgeObject,
+    RawKnowledgeSource,
+} from './data/models';
 
 const debug = require('debug')('ksac:definition-mapper:service');
 
@@ -8,17 +14,19 @@ const WARN = 'Warning!'.yellow.bold;
 
 @injectable()
 export class DefinitionMapperService {
-
     mapFileToRawDefinition(file: DefinitionFile): RawDefinition {
         debug(`mapping file '${file.name}' content to raw definition`);
 
-        if(!file.content.knowledge_source) {
-            console.error(`${WARN} File '${file.name}' does not contain any knowledge source`);
+        if (!file.content.knowledge_source) {
+            console.error(
+                `${WARN} File '${file.name}' does not contain any knowledge source`,
+            );
             return { knowledgeSources: [], fileName: file.name };
         }
 
-        const knowledgeSources = file.content.knowledge_source
-            .map(ks => this.mapKnowledgeSource(ks, file.name));
+        const knowledgeSources = file.content.knowledge_source.map((ks) =>
+            this.mapKnowledgeSource(ks, file.name),
+        );
 
         return { knowledgeSources, fileName: file.name };
     }
@@ -26,7 +34,7 @@ export class DefinitionMapperService {
     mergeDefinitions(definitions: Definition[]): Definition {
         debug('merging definitions');
         const knowledgeSources = definitions
-            .map(d => d.knowledgeSources)
+            .map((d) => d.knowledgeSources)
             .reduce((acc, val) => [...acc, ...val], []);
 
         return { knowledgeSources };
@@ -42,11 +50,14 @@ export class DefinitionMapperService {
         }
 
         const knowledgeSource = {
-            slug, fileName, ...source,
+            slug,
+            fileName,
+            ...source,
         };
         delete knowledgeSource.knowledge_object;
-        knowledgeSource.knowledgeObjects = source.knowledge_object
-            .map(ko => this.mapKnowledgeObject(ko));
+        knowledgeSource.knowledgeObjects = source.knowledge_object.map((ko) =>
+            this.mapKnowledgeObject(ko),
+        );
         return knowledgeSource;
     }
 
@@ -57,7 +68,8 @@ export class DefinitionMapperService {
         const object = objects[0];
 
         const knowledgeObject = {
-            slug, ...object,
+            slug,
+            ...object,
         };
         delete knowledgeObject.use_cases;
         delete knowledgeObject.import_file;

@@ -1,16 +1,16 @@
-import { injectable } from "inversify";
+import { injectable } from 'inversify';
 import prompts from 'prompts';
-import { CommandError } from "../command/command.error";
+import { CommandError } from '../command/command.error';
 
 @injectable()
 export class InquirerService {
-
     async promptRealm(): Promise<string> {
         const { realm } = await prompts.prompt({
             type: 'text',
             name: 'realm',
             message: 'Realm',
-            validate: (input: string) => input.length > 0 ? true : 'Realm is required',
+            validate: (input: string) =>
+                input.length > 0 ? true : 'Realm is required',
         });
 
         if (!realm) {
@@ -25,7 +25,8 @@ export class InquirerService {
             type: 'text',
             name: 'clientId',
             message: 'Client ID',
-            validate: (input: string) => input.length > 0 ? true : 'Client ID is required',
+            validate: (input: string) =>
+                input.length > 0 ? true : 'Client ID is required',
         });
 
         if (!clientId) {
@@ -40,7 +41,8 @@ export class InquirerService {
             type: 'password',
             name: 'clientSecret',
             message: 'Client Key',
-            validate: (input: string) => input.length > 0 ? true : 'Client Key is required',
+            validate: (input: string) =>
+                input.length > 0 ? true : 'Client Key is required',
         });
 
         if (!clientSecret) {

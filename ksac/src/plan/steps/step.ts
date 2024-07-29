@@ -1,4 +1,4 @@
-import { ConciliationService } from "../../conciliation/conciliation.service";
+import { ConciliationService } from '../../conciliation/conciliation.service';
 
 export abstract class Step {
     abstract run(service: ConciliationService): Promise<void>;

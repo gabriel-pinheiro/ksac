@@ -18,10 +18,12 @@ export class CommandService {
         private readonly authService: AuthService,
         private readonly conciliationService: ConciliationService,
         private readonly preferenceService: PreferenceService,
-    ) { }
+    ) {}
 
     async login() {
-        console.log(`Start by creating a Service Account or Access Token on StackSpot:`);
+        console.log(
+            `Start by creating a Service Account or Access Token on StackSpot:`,
+        );
         console.log(`https://app.stackspot.com/account/access-token`);
 
         const realm = await this.inquirerService.promptRealm();
@@ -41,7 +43,7 @@ export class CommandService {
         this.preferenceService.setOptions(options);
         const definitions = await this.definitionService.getDefinitions();
 
-        if(mustShow) {
+        if (mustShow) {
             console.log(JSON.stringify(definitions, null, 2));
         }
 
@@ -65,7 +67,9 @@ export class CommandService {
 
         if (isDestroy) {
             console.error('\nAll the Knowledge Sources above and their'.yellow);
-            console.error('Knowledge Objects will be destroyed in 2 seconds.'.yellow);
+            console.error(
+                'Knowledge Objects will be destroyed in 2 seconds.'.yellow,
+            );
             console.error('Press Ctrl+C to cancel'.yellow.bold);
             await Hoek.wait(2000);
         }
@@ -80,11 +84,13 @@ export class CommandService {
         console.log('');
 
         if (!steps.length) {
-            console.log('Knowledge Sources are up to date. No changes needed'.green);
+            console.log(
+                'Knowledge Sources are up to date. No changes needed'.green,
+            );
             return;
         }
 
         console.log('The following changes will be made:');
-        steps.forEach(step => console.log(step.description));
+        steps.forEach((step) => console.log(step.description));
     }
 }
