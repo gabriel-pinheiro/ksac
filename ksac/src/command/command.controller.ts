@@ -59,6 +59,11 @@ export class CommandController implements Controller {
             );
 
         this.command
+            .command('fetch <slug>')
+            .description('Fetches a Knowledge Source as an HCL definition')
+            .action((slug) => this.errorProxy(() => this.service.fetch(slug)));
+
+        this.command
             .command('logout')
             .description('Remove the saved credentials')
             .action(() => this.errorProxy(() => this.service.logout()));

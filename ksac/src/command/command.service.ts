@@ -8,6 +8,7 @@ import { Step } from '../plan/steps/step';
 import { ConciliationService } from '../conciliation/conciliation.service';
 import * as Hoek from '@hapi/hoek';
 import { PreferenceService } from '../preference/preference.service';
+import { FetchService } from '../fetch/fetch.service';
 
 @injectable()
 export class CommandService {
@@ -18,6 +19,7 @@ export class CommandService {
         private readonly authService: AuthService,
         private readonly conciliationService: ConciliationService,
         private readonly preferenceService: PreferenceService,
+        private readonly fetchService: FetchService,
     ) {}
 
     async login() {
@@ -78,6 +80,11 @@ export class CommandService {
         await this.conciliationService.applyPlan(steps);
         console.log('');
         console.log('Changes applied'.green);
+    }
+
+    async fetch(slug: string) {
+        const definition = await this.fetchService.fetch(slug);
+        console.log(definition);
     }
 
     private printPlan(steps: Step[]) {
