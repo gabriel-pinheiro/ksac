@@ -30,7 +30,7 @@ describe('StackSpot', () => {
             const description = 'Test description';
 
             mockApi.createKnowledgeSource.mockResolvedValue({} as any);
-            mockApi.shareKnowledgeSource.mockResolvedValue({} as any);
+            mockApi.publishKnowledgeSource.mockResolvedValue({} as any);
             mockApi.authenticate.mockResolvedValue({
                 data: {
                     access_token: 'test-token',
@@ -50,7 +50,7 @@ describe('StackSpot', () => {
                 false,
                 'personal'
             );
-            expect(mockApi.shareKnowledgeSource).toHaveBeenCalledWith('test-token', slug);
+            expect(mockApi.publishKnowledgeSource).toHaveBeenCalledWith('test-token', slug);
         });
     });
 

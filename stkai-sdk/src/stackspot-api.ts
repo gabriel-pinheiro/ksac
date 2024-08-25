@@ -147,16 +147,16 @@ export class StackSpotAPI {
     }
 
     /**
-     * Shares an existing knowledge source.
+     * Publishes an existing knowledge source.
      * @param jwt - The JSON Web Token for authorization.
      * @param slug - The slug identifier for the knowledge source.
      * @returns A promise that resolves when the knowledge source is shared.
      */
-    async shareKnowledgeSource(
+    async publishKnowledgeSource(
         jwt: string,
         slug: string
     ): Promise<AxiosResponse> {
-        return await this.api.post(`/v1/knowledge-sources/${slug}/share`, {}, {
+        return await this.api.post(`/v1/knowledge-sources/${slug}/publish`, {}, {
             headers: {
                 Authorization: `Bearer ${jwt}`,
             },

@@ -53,7 +53,7 @@ export class StackSpot {
             false,
             'personal'
         );
-        await this.api.shareKnowledgeSource(
+        await this.api.publishKnowledgeSource(
             this.token,
             slug
         );
