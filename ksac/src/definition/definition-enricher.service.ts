@@ -10,6 +10,7 @@ import {
 import path from 'path';
 import { promises } from 'fs';
 import { CommandError } from '../command/command.error';
+import { PreferenceService } from '../preference/preference.service';
 
 const { readFile } = promises;
 
@@ -17,6 +18,8 @@ const debug = require('debug')('ksac:definition-enricher:service');
 
 @injectable()
 export class DefinitionEnricherService {
+    constructor(private readonly preferenceService: PreferenceService) {}
+
     async enrichDefinitions(
         rawDefinitions: RawDefinition[],
     ): Promise<Definition[]> {
@@ -49,7 +52,7 @@ export class DefinitionEnricherService {
 
         for (const rawKO of raw.knowledgeObjects) {
             const enrichedKO = await this.enrichKnowledgeObject(rawKO, raw);
-            knowledgeObjects.push(enrichedKO);
+            knowledgeObjects.push(...enrichedKO);
         }
 
         return { ...raw, knowledgeObjects };
@@ -58,7 +61,7 @@ export class DefinitionEnricherService {
     private async enrichKnowledgeObject(
         raw: RawKnowledgeObject,
         ks: RawKnowledgeSource,
-    ): Promise<KnowledgeObject> {
+    ): Promise<KnowledgeObject[]> {
         debug(`enriching knowledge object '${raw.slug}'`);
         let content = raw.content;
         if (raw.importFile) {
@@ -71,13 +74,11 @@ export class DefinitionEnricherService {
         }
 
         content = content?.trim?.() ?? '';
+        const chunks = this.chunkContent(content);
 
-        return {
-            content,
-            slug: raw.slug,
-            language: raw.language,
-            useCases: raw.useCases.join('\n'),
-        };
+        return chunks.map((chunk: string, idx: number) =>
+            this.createKnowledgeObject(raw, chunk, idx, chunks.length),
+        );
     }
 
     private async importContent(
@@ -97,5 +98,67 @@ export class DefinitionEnricherService {
                 `Error importing content from '${filePath}' for knowledge object '${koSlug}' in knowledge source '${ksSlug}':\n${error.message}`,
             );
         }
+    }
+
+    private chunkContent(content: string): string[] {
+        const CHUNK_THRESHOLD = this.preferenceService.chunkThreshold;
+        const CHUNK_SIZE = this.preferenceService.chunkSize;
+        const len = this.countNonSpaceChars(content);
+
+        if (len <= CHUNK_THRESHOLD) {
+            return [content];
+        }
+
+        const chunks: string[] = [];
+        let chunk = '';
+        let chunkLen = 0;
+
+        debug(`chunking content with ${len} non-space characters`);
+        for (let i = 0; i < content.length; i++) {
+            const char = content[i];
+            chunk += char;
+
+            if (char.match(/\S/)) {
+                chunkLen++;
+            }
+
+            if (chunkLen >= CHUNK_SIZE) {
+                debug(`adding ${chunk.length} chars long chunk`);
+                chunks.push(chunk.trim());
+                chunk = '';
+                chunkLen = 0;
+            }
+        }
+
+        if (chunk.trim()) {
+            debug(`adding ${chunk.length} chars long chunk`);
+            chunks.push(chunk.trim());
+        }
+
+        return chunks;
+    }
+
+    private countNonSpaceChars(content: string): number {
+        const nonSpaceChars = content.match(/\S/g);
+        return nonSpaceChars?.length ?? 0;
+    }
+
+    private createKnowledgeObject(
+        raw: RawKnowledgeObject,
+        content: string,
+        idx: number,
+        totalChunks: number,
+    ): KnowledgeObject {
+        let slug = raw.slug;
+        if (totalChunks > 1) {
+            slug = `${slug}-chunk-${idx}`;
+        }
+
+        return {
+            content,
+            slug,
+            language: raw.language,
+            useCases: raw.useCases.join('\n'),
+        };
     }
 }

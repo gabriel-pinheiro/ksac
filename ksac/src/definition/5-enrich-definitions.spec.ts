@@ -5,6 +5,7 @@ import { DefinitionEnricherService } from './definition-enricher.service';
 import { Definition } from './data/models';
 import { promises } from 'fs';
 import { CommandError } from '../command/command.error';
+import { PreferenceService } from '../preference/preference.service';
 
 const { readFile } = promises;
 
@@ -20,11 +21,13 @@ jest.mock('fs', () => ({
 }));
 
 describe('ksac validate - step 5: Enrich Definitions', () => {
+    let preference: PreferenceService;
     let mapper: DefinitionMapperService;
     let service: DefinitionEnricherService;
 
     beforeEach(() => {
-        service = new DefinitionEnricherService();
+        preference = new PreferenceService();
+        service = new DefinitionEnricherService(preference);
         mapper = new DefinitionMapperService();
     });
 

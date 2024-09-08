@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import 'reflect-metadata';
 import 'colors';
 import { Container } from 'inversify';
@@ -241,6 +242,36 @@ describe('Success Scenarios', () => {
                     language: 'golang',
                 }],
             }],
+        });
+    });
+
+    it('should chunk successfully', async () => {
+        preferenceService.setOptions({
+            chunkThreshold: 60,
+            chunkSize: 50,
+            path: 'test/e2e/success/scenario-12',
+        });
+        const definition = await service.getDefinitions();
+
+        expect(definition).toMatchObject({
+            knowledgeSources: [{
+                knowledgeObjects: [{
+                    content: "# Lorem ipsum dolor\n\nLorem ipsum dolor sit amet, consectetur",
+                    slug: "ko-slug-chunk-0",
+                    language: "markdown",
+                    useCases: "",
+                }, {
+                    content: "adipiscing elit\nsed do eiusmod tempor incididunt ut labore",
+                    slug: "ko-slug-chunk-1",
+                    language: "markdown",
+                    useCases: "",
+                }, {
+                    content: "et dolore magna\naliqua.",
+                    slug: "ko-slug-chunk-2",
+                    language: "markdown",
+                    useCases: "",
+                }]
+            }]
         });
     });
 });

@@ -4,6 +4,7 @@ import { DefinitionMapperService } from './definition-mapper.service';
 import { DefinitionEnricherService } from './definition-enricher.service';
 import { DefinitionValidationService } from './definition-validator.service';
 import { CommandError } from '../command/command.error';
+import { PreferenceService } from '../preference/preference.service';
 
 const fileFactory = (hcl: string) => ({
     name: 'file1.hcl',
@@ -11,12 +12,14 @@ const fileFactory = (hcl: string) => ({
 });
 
 describe('ksac validate - step 7: Validate Content', () => {
+    let preference: PreferenceService;
     let mapper: DefinitionMapperService;
     let enricher: DefinitionEnricherService;
     let service: DefinitionValidationService;
 
     beforeEach(() => {
-        enricher = new DefinitionEnricherService();
+        preference = new PreferenceService();
+        enricher = new DefinitionEnricherService(preference);
         mapper = new DefinitionMapperService();
         service = new DefinitionValidationService();
     });

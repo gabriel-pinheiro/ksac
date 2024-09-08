@@ -3,17 +3,20 @@ import { parse } from 'hcl-parser';
 import { DefinitionMapperService } from './definition-mapper.service';
 import { DefinitionEnricherService } from './definition-enricher.service';
 import { Definition } from './data/models';
+import { PreferenceService } from '../preference/preference.service';
 
 const fileFactory = (hcl: string, name: string) => ({
     name, content: parse(hcl)[0],
 });
 
 describe('ksac validate - step 6: Merge Definitions', () => {
+    let preference: PreferenceService;
     let service: DefinitionMapperService;
     let enricher: DefinitionEnricherService;
 
     beforeEach(() => {
-        enricher = new DefinitionEnricherService();
+        preference = new PreferenceService();
+        enricher = new DefinitionEnricherService(preference);
         service = new DefinitionMapperService();
     });
 
