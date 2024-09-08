@@ -22,17 +22,26 @@ export class CommandService {
         private readonly fetchService: FetchService,
     ) {}
 
-    async login() {
-        console.log(
-            `Start by creating a Service Account or Access Token on StackSpot:`,
-        );
-        console.log(`https://app.stackspot.com/account/access-token`);
+    async login(
+        realmOverride?: string,
+        clientIdOverride?: string,
+        clientKeyOverride?: string,
+    ) {
+        if (!realmOverride || !clientIdOverride || !clientKeyOverride) {
+            console.log(
+                `Start by creating a Service Account or Access Token on StackSpot:`,
+            );
+            console.log(`https://app.stackspot.com/account/access-token`);
+        }
 
-        const realm = await this.inquirerService.promptRealm();
-        const clientId = await this.inquirerService.promptClientId();
-        const clientSecret = await this.inquirerService.promptClientSecret();
+        const realm =
+            realmOverride ?? (await this.inquirerService.promptRealm());
+        const clientId =
+            clientIdOverride ?? (await this.inquirerService.promptClientId());
+        const clientKey =
+            clientKeyOverride ?? (await this.inquirerService.promptClientKey());
 
-        await this.authService.login(realm, clientId, clientSecret);
+        await this.authService.login(realm, clientId, clientKey);
         console.log('Credentials saved'.green);
     }
 

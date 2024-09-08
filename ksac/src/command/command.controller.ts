@@ -16,8 +16,24 @@ export class CommandController implements Controller {
     async registerCommands() {
         this.command
             .command('login')
+            .option(
+                '-r, --realm <realm>',
+                'Pass the Realm via this option or omit it to be prompted',
+            )
+            .option(
+                '-i, --client-id <client-id>',
+                'Pass the Client ID via this option or omit it to be prompted',
+            )
+            .option(
+                '-k, --client-key <client-key>',
+                'Pass the Client Key via this option or omit it to be prompted',
+            )
             .description('Set the credentials to access the StackSpot AI API')
-            .action(() => this.errorProxy(() => this.service.login()));
+            .action(({ realm, clientId, clientKey }) =>
+                this.errorProxy(() =>
+                    this.service.login(realm, clientId, clientKey),
+                ),
+            );
 
         this.command
             .command('validate')

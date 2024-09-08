@@ -36,7 +36,7 @@ export class InquirerService {
         return clientId;
     }
 
-    async promptClientSecret(): Promise<string> {
+    async promptClientKey(): Promise<string> {
         const { clientSecret } = await prompts.prompt({
             type: 'password',
             name: 'clientSecret',
