@@ -1,11 +1,11 @@
 {
   "name": "stkai-sdk",
-  "version": "1.4.0",
+  "version": "1.4.2",
   "description": "SDK for integration with StackSpot AI",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "prebuild": "rimraf lib",
+    "prebuild": "rimraf dist",
     "build": "tsc",
     "test": "jest",
     "prepare": "npm run build"
