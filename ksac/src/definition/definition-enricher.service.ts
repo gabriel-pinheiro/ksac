@@ -8,10 +8,12 @@ import {
     KnowledgeSource,
 } from './data/models';
 import path from 'path';
+import pdf from 'pdf-parse';
+import { isText } from 'istextorbinary';
+import { fromBuffer as fileTypeFromBuffer, MimeType } from 'file-type';
 import { promises } from 'fs';
 import { CommandError } from '../command/command.error';
 import { PreferenceService } from '../preference/preference.service';
-
 const { readFile } = promises;
 
 const debug = require('debug')('ksac:definition-enricher:service');
@@ -92,12 +94,45 @@ export class DefinitionEnricherService {
         try {
             debug(`importing content from file '${filePath}'`);
             const content = await readFile(filePath);
-            return content.toString();
+
+            debug(`read ${content.length} bytes, detecting file type`);
+            const type = await this.detectFileType(filePath, content);
+            debug(`file type is '${type}'`);
+
+            if (type === 'text/plain') {
+                return content.toString();
+            }
+
+            if (type === 'application/pdf') {
+                return this.extractTextFromPdf(content);
+            }
+
+            throw new CommandError(`Unsupported file type '${type}'`);
         } catch (error) {
             throw new CommandError(
                 `Error importing content from '${filePath}' for knowledge object '${koSlug}' in knowledge source '${ksSlug}':\n${error.message}`,
             );
         }
+    }
+
+    private async detectFileType(
+        filePath: string,
+        content: Buffer,
+    ): Promise<MimeType | 'text/plain' | 'unknown'> {
+        const isTextFile = isText(filePath, content);
+        if (isTextFile) {
+            return 'text/plain';
+        }
+
+        const type = await fileTypeFromBuffer(content);
+        return type?.mime ?? 'unknown';
+    }
+
+    private async extractTextFromPdf(content: Buffer): Promise<string> {
+        debug('extracting text from PDF');
+        const { text } = await pdf(content);
+        debug(`extracted ${text.length} chars from PDF`);
+        return text;
     }
 
     private chunkContent(content: string): string[] {
